@@ -8,7 +8,7 @@
 }
 
 .navbar-default {
-  background: #4891dc;
+  background: #0153a7;
   border: none;
   -ms-border-radius: 0;
   border-radius: 0;
@@ -17,17 +17,17 @@
 
 .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:visited {
   color: #fff;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 12px;
+  padding-bottom: 13px;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:visited:hover, .navbar-default .navbar-nav > li > a:visited:focus {
   color: #fff;
-  background-color: #6aa6e3;
+  background-color: #0167d0;
 }
 
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:visited, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-  background-color: #287cd3 !important;
+  background-color: #013f7e !important;
   color: #fff;
 }
 
@@ -189,7 +189,7 @@ h6 {
 }
 
 .blue-colour {
-  color: #4891dc;
+  color: #0153a7;
 }
 
 .orange-colour {
@@ -313,12 +313,12 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
   text-decoration: none;
   background-color: #efefef;
   color: #333;
-  background-color: #4891dc;
+  background-color: #0153a7;
   color: #fff;
 }
 
 .btn-mvc-blue:hover, .btn-mvc-blue:focus, .btn-mvc-blue:active, .btn-mvc-blue:visited:hover, .btn-mvc-blue:visited:focus, .btn-mvc-blue:visited:active {
-  background-color: #287acf;
+  background-color: #013c79;
   color: #fff;
 }
 
@@ -1294,7 +1294,7 @@ span.tag {
   position: relative;
   -ms-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0;
-  background-color: #6fa8e3;
+  background-color: #016ad5;
   color: #fff;
   font-size: 10px;
   margin-right: 6px;
@@ -1303,7 +1303,7 @@ span.tag {
 }
 
 span.tag .badge {
-  background-color: #4891dc;
+  background-color: #0153a7;
   font-size: 10px;
   margin-top: -1px;
 }
@@ -1316,17 +1316,17 @@ span.tag:before {
   left: -6px;
   width: 0;
   height: 0;
-  border-color: transparent #6fa8e3 transparent transparent;
+  border-color: transparent #016ad5 transparent transparent;
   border-style: solid;
   border-width: 9px 6px 9px 0;
 }
 
 span.tag:hover {
-  background-color: #4891dc;
+  background-color: #0153a7;
 }
 
 span.tag:hover:before {
-  border-color: transparent #4891dc transparent transparent;
+  border-color: transparent #0153a7 transparent transparent;
 }
 
 span.tag a, span.tag a:visited {
@@ -2407,7 +2407,7 @@ div.mce-path {
 }
 
 .pushy a:hover, .pushy a:focus, .pushy a:visited:hover, .pushy a:visited:focus {
-  background: #4891dc;
+  background: #0153a7;
   color: #FFF;
 }
 

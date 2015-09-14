@@ -1,6 +1,6 @@
 ﻿$color-global-green: #2abd54;
 $color-global-red: #bd2a38;
-$color-global-blue: #4891dc;
+$color-global-blue: #0153a7;
 $color-global-yellow: #f2f226;
 $color-global-grey-blue: #ecf0f1;
 
@@ -35,7 +35,7 @@ input.form-control, textarea.form-control, select.form-control { -ms-border-radi
 .navbar-default { background: $color-global-blue; border: none; -ms-border-radius: 0; border-radius: 0; color: #fff;
     .navbar-nav {
         > li {
-            > a, > a:visited { color: #fff; padding-top: 10px; padding-bottom: 10px;
+            > a, > a:visited { color: #fff; padding-top: 12px; padding-bottom: 13px;
                 &:hover, &:focus { color: #fff; background-color: lighten($color-global-blue, 8%); }
             }
         }
