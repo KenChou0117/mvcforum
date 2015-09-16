@@ -12,6 +12,7 @@ namespace MVCForum.Domain.Events
         public string Password { get; set; }
         public bool RememberMe { get; set; }
         public IMembershipService MembershipService { get; set; }
+        public ILoggingService LoggingService { get; set; }
         public MembershipUser MembershipUser { get; set; }
     }
 }

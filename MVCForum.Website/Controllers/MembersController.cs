@@ -652,19 +652,12 @@ namespace MVCForum.Website.Controllers
                             RememberMe = model.RememberMe,
                             ReturnUrl = model.ReturnUrl, 
                             MembershipService = MembershipService,
+                            LoggingService = LoggingService,
                             MembershipUser = user,
                         };
                         EventManager.Instance.FireBeforeLogin(this, e);
                         unitOfWork.SaveChanges();
-                        //try
-                        //{
-                        //    unitOfWork.Commit();
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    unitOfWork.Rollback();
-                        //    LoggingService.Error(ex);
-                        //}
+
                         if (!e.Cancel)
                         {
                             if (MembershipService.ValidateUser(username, password, System.Web.Security.Membership.MaxInvalidPasswordAttempts))
@@ -681,7 +674,7 @@ namespace MVCForum.Website.Controllers
                                 user = e.MembershipUser;
                             }
                         }
-                            
+                        
                         if (user.IsApproved && !user.IsLockedOut)
                         {
                             FormsAuthentication.SetAuthCookie(user.UserName, model.RememberMe);

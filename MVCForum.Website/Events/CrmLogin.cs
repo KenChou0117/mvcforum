@@ -14,7 +14,7 @@ namespace MVCForum.Website.Events
     // In this example I am adding an event to intercept when someone tries to login
     // The example below would be for a single sign on solution - Where you verify the user against a seperate 
     // database and log them in.
-    public class ExampleBeforeLogin : IEventHandler 
+    public class CrmLogin : IEventHandler 
     {
         // Register the events here
         public void RegisterHandlers(EventManager theEventManager)
@@ -67,6 +67,7 @@ namespace MVCForum.Website.Events
                         CrmID = crmUser.CustomerID,
                     };
                     var createStatus = e.MembershipService.CreateUser(userToSave);
+                    e.LoggingService.Error(String.Format("CRM User Login: account '{0}' create status: {1}", e.UserName, createStatus));
                     if (createStatus == Domain.DomainModel.MembershipCreateStatus.Success && userToSave.IsApproved)
                     {
                         //建立成功，Login User
