@@ -70,6 +70,8 @@ namespace MVCForum.Domain.DomainModel
         public bool? TwitterShowFeed { get; set; }
         public DateTime? LoginIdExpires { get; set; }
         public string MiscAccessToken { get; set; }
+        //Crm ID
+        public int? CrmID { get; set; }
 
         public bool? DisableEmailNotifications { get; set; }
         public bool? DisablePosting { get; set; }

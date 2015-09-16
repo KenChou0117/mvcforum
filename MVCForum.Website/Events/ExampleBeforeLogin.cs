@@ -63,7 +63,8 @@ namespace MVCForum.Website.Events
                         Email = e.UserName,
                         Password = e.Password,
                         IsApproved = true,
-                        Comment = String.Empty
+                        Comment = String.Empty,
+                        CrmID = crmUser.CustomerID,
                     };
                     var createStatus = e.MembershipService.CreateUser(userToSave);
                     if (createStatus == Domain.DomainModel.MembershipCreateStatus.Success && userToSave.IsApproved)

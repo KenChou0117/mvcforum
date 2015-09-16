@@ -10,5 +10,7 @@ namespace MVCForum.Domain.Interfaces.Repositories
     public partial interface IUserRegistrationRespository
     {
         UserRegistration Get(string Email, string pWord);
+        UserRegistration Get(int crmID);
+        int UpdatePassword(int crmId, string password);
     }
 }

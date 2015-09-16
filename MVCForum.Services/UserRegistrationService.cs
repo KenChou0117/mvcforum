@@ -23,5 +23,11 @@ namespace MVCForum.Services
             var user = _userRegistrationRespository.Get(Email, pWord);
             return user;
         }
+
+        public UserRegistration Get(int crmId)
+        {
+            var user = _userRegistrationRespository.Get(crmId);
+            return user;
+        }
     }
 }

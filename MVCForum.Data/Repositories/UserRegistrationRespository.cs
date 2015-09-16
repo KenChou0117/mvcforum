@@ -7,6 +7,7 @@ using MVCForum.Domain.Interfaces.Repositories;
 using MVCForum.Domain.DomainModel;
 using MVCForum.Domain.Interfaces;
 using MVCForum.Data.Context;
+using System.Data.SqlClient;
 
 namespace MVCForum.Data.Repositories
 {
@@ -27,6 +28,20 @@ namespace MVCForum.Data.Repositories
         public UserRegistration Get(string Email, string pWord)
         {
             return _context.UserRegistration.FirstOrDefault(p => p.Email == Email && p.pWord == pWord);
+        }
+
+        public UserRegistration Get(int crmId)
+        {
+            return _context.UserRegistration.FirstOrDefault(p => p.CustomerID == crmId);
+        }
+
+        public int UpdatePassword(int crmId, string password)
+        {
+            return _context.Database.ExecuteSqlCommand("UPDATE UserRegistration SET pWord = @password WHERE customerId = @crmid",
+                new object[] { 
+                    new SqlParameter("@password", password), 
+                    new SqlParameter("@crmid", crmId)  
+                });
         }
     }
 }

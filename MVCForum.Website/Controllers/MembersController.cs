@@ -250,34 +250,35 @@ namespace MVCForum.Website.Controllers
         /// <returns></returns>
         public ActionResult Register()
         {
-            if (SettingsService.GetSettings().SuspendRegistration != true)
-            {
-                using (UnitOfWorkManager.NewUnitOfWork())
-                {
-                    var user = MembershipService.CreateEmptyUser();
+            //if (SettingsService.GetSettings().SuspendRegistration != true)
+            //{
+            //    using (UnitOfWorkManager.NewUnitOfWork())
+            //    {
+            //        var user = MembershipService.CreateEmptyUser();
 
-                    // Populate empty viewmodel
-                    var viewModel = new MemberAddViewModel
-                    {
-                        UserName = user.UserName,
-                        Email = user.Email,
-                        Password = user.Password,
-                        IsApproved = user.IsApproved,
-                        Comment = user.Comment,
-                        AllRoles = RoleService.AllRoles()
-                    };
+            //        // Populate empty viewmodel
+            //        var viewModel = new MemberAddViewModel
+            //        {
+            //            UserName = user.UserName,
+            //            Email = user.Email,
+            //            Password = user.Password,
+            //            IsApproved = user.IsApproved,
+            //            Comment = user.Comment,
+            //            AllRoles = RoleService.AllRoles()
+            //        };
 
-                    // See if a return url is present or not and add it
-                    var returnUrl = Request["ReturnUrl"];
-                    if (!string.IsNullOrEmpty(returnUrl))
-                    {
-                        viewModel.ReturnUrl = returnUrl;
-                    }
+            //        // See if a return url is present or not and add it
+            //        var returnUrl = Request["ReturnUrl"];
+            //        if (!string.IsNullOrEmpty(returnUrl))
+            //        {
+            //            viewModel.ReturnUrl = returnUrl;
+            //        }
 
-                    return View(viewModel);
-                }
-            }
-            return RedirectToAction("Index", "Home");
+            //        return View(viewModel);
+            //    }
+            //}
+            //return RedirectToAction("Index", "Home");
+            return Redirect(SiteConstants.SignUpPage);
         }
 
         /// <summary>
@@ -1254,7 +1255,8 @@ namespace MVCForum.Website.Controllers
 
         public ActionResult ForgotPassword()
         {
-            return View();
+            //return View();
+            return Redirect(SiteConstants.ForgetPasswordPage);
         }
 
         [HttpPost]

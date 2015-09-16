@@ -42,6 +42,8 @@ namespace MVCForum.Services
         private readonly ILoggingService _loggingService;
         private readonly ICategoryService _categoryService;
 
+        private readonly IUserRegistrationRespository _userRegistrationRespository;
+
         private LoginAttemptStatus _lastLoginStatus = LoginAttemptStatus.LoginSuccessful;
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace MVCForum.Services
             ICategoryNotificationService categoryNotificationService, ILoggingService loggingService, IUploadedFileService uploadedFileService,
             IPostRepository postRepository, IPollVoteRepository pollVoteRepository, IPollAnswerRepository pollAnswerRepository,
             IPollRepository pollRepository, ITopicRepository topicRepository, IFavouriteRepository favouriteRepository, 
-            ICategoryService categoryService)
+            ICategoryService categoryService, IUserRegistrationRespository userRegistrationRespository)
         {
             _membershipRepository = membershipRepository;
             _settingsRepository = settingsRepository;
@@ -96,6 +98,7 @@ namespace MVCForum.Services
             _topicRepository = topicRepository;
             _favouriteRepository = favouriteRepository;
             _categoryService = categoryService;
+            _userRegistrationRespository = userRegistrationRespository;
         }
 
 
@@ -307,7 +310,7 @@ namespace MVCForum.Services
                     newUser.CreateDate = newUser.LastPasswordChangedDate = DateTime.UtcNow;
                     newUser.LastLockoutDate = (DateTime)SqlDateTime.MinValue;
                     newUser.LastLoginDate = DateTime.UtcNow;
-
+                    
                     newUser.IsApproved = !settings.ManuallyAuthoriseNewMembers;
                     newUser.IsLockedOut = false;
 
@@ -487,12 +490,24 @@ namespace MVCForum.Services
             // Cleared to go ahead with new password
             salt = StringUtils.CreateSalt(AppConstants.SaltSize);
             var newHash = StringUtils.GenerateSaltedHash(newPassword, salt);
-
-            existingUser.Password = newHash;
-            existingUser.PasswordSalt = salt;
-            existingUser.LastPasswordChangedDate = DateTime.UtcNow;
-
-            return true;
+            //Get Crm UserRegistration Entity and Change Password
+            var crmUser = _userRegistrationRespository.Get(existingUser.CrmID ?? 0);
+            int UpdateRowCount = 0;
+            if (crmUser != null)
+            {
+                UpdateRowCount = _userRegistrationRespository.UpdatePassword(existingUser.CrmID ?? 0, newPassword);
+            }
+            if (UpdateRowCount > 0 || crmUser == null)
+            {
+                existingUser.Password = newHash;
+                existingUser.PasswordSalt = salt;
+                existingUser.LastPasswordChangedDate = DateTime.UtcNow;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

@@ -207,5 +207,15 @@ namespace MVCForum.Website.Application
                 return Convert.ToInt32(ConfigurationManager.AppSettings["EmailsToSendPerJob"]);
             }
         }
+
+        public static String SignUpPage
+        {
+            get { return ConfigurationManager.AppSettings["SignUpPage"]; }
+        }
+
+        public static String ForgetPasswordPage
+        {
+            get { return ConfigurationManager.AppSettings["ForgetPasswordPage"]; }
+        }
     }
 }
