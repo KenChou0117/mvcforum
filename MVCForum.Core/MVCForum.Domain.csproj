@@ -89,6 +89,7 @@
     <Compile Include="DomainModel\Attributes\DescriptionAttribute.cs" />
     <Compile Include="DomainModel\Attributes\NameAttribute.cs" />
     <Compile Include="DomainModel\Attributes\IdAttribute.cs" />
+    <Compile Include="DomainModel\Entities\UserRegistration.cs" />
     <Compile Include="DomainModel\Entities\Badge.cs" />
     <Compile Include="DomainModel\Entities\BannedEmail.cs" />
     <Compile Include="DomainModel\Entities\Category.cs" />
@@ -164,8 +165,11 @@
     <Compile Include="Interfaces\Badges\IVoteUpBadge.cs" />
     <Compile Include="Interfaces\Events\IEventHandler.cs" />
     <Compile Include="Interfaces\Events\IEventManager.cs" />
+    <Compile Include="Interfaces\ICRMContext.cs" />
+    <Compile Include="Interfaces\Repositories\IUserRegistrationRespository.cs" />
     <Compile Include="Interfaces\Repositories\IBlockRepository.cs" />
     <Compile Include="Interfaces\Repositories\ITagNotificationRepository.cs" />
+    <Compile Include="Interfaces\Services\IUserRegistrationService.cs" />
     <Compile Include="Interfaces\Services\IBlockService.cs" />
     <Compile Include="Interfaces\Services\ICacheService.cs" />
     <Compile Include="Interfaces\IModelAttribute.cs" />

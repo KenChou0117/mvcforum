@@ -59,6 +59,7 @@ namespace MVCForum.IOC
 
             // Database context, one per request, ensure it is disposed
             container.BindInRequestScope<IMVCForumContext, MVCForumContext>();
+            container.BindInRequestScope<ICRMContext, CRMContext>();
             container.BindInRequestScope<IUnitOfWorkManager, UnitOfWorkManager>();
 
             // Quartz
@@ -101,6 +102,8 @@ namespace MVCForum.IOC
             container.BindInRequestScope<IReflectionService, ReflectionService>();
             container.BindInRequestScope<IBlockService, BlockService>();
 
+            container.BindInRequestScope<IUserRegistrationService, UserRegistrationService>();
+
             container.BindInRequestScope<IRoleRepository, RoleRepository>();
             container.BindInRequestScope<ICategoryRepository, CategoryRepository>();
             container.BindInRequestScope<IMembershipRepository, MembershipRepository>();
@@ -130,6 +133,8 @@ namespace MVCForum.IOC
             container.BindInRequestScope<IEmailRepository, EmailRepository>();
             container.BindInRequestScope<ITagNotificationRepository, TagNotificationRepository>();
             container.BindInRequestScope<IBlockRepository, BlockRepository>();
+
+            container.BindInRequestScope<IUserRegistrationRespository, UserRegistrationRespository>();
 
             CustomBindings(container);
 

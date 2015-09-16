@@ -642,102 +642,124 @@ namespace MVCForum.Website.Controllers
                         // You can do manual lookups to check users based on a webservice and validate a user
                         // Then log them in if they exist or create them and log them in - Have passed in a UnitOfWork
                         // To allow database changes.
-
+                        var message = new GenericMessageViewModel();
+                        var user = new MembershipUser();
                         var e = new LoginEventArgs
                         {
                             UserName = model.UserName,
                             Password = model.Password,
                             RememberMe = model.RememberMe,
                             ReturnUrl = model.ReturnUrl, 
-                            UnitOfWork = unitOfWork
+                            MembershipService = MembershipService,
+                            MembershipUser = user,
                         };
                         EventManager.Instance.FireBeforeLogin(this, e);
-
+                        unitOfWork.SaveChanges();
+                        //try
+                        //{
+                        //    unitOfWork.Commit();
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    unitOfWork.Rollback();
+                        //    LoggingService.Error(ex);
+                        //}
                         if (!e.Cancel)
                         {
-                            var message = new GenericMessageViewModel();
-                            var user = new MembershipUser();
                             if (MembershipService.ValidateUser(username, password, System.Web.Security.Membership.MaxInvalidPasswordAttempts))
                             {
-                                // Set last login date
                                 user = MembershipService.GetUser(username);
-                                if (user.IsApproved && !user.IsLockedOut)
-                                {
-                                    FormsAuthentication.SetAuthCookie(username, model.RememberMe);
-                                    user.LastLoginDate = DateTime.UtcNow;
-
-                                    if (Url.IsLocalUrl(model.ReturnUrl) && model.ReturnUrl.Length > 1 && model.ReturnUrl.StartsWith("/")
-                                        && !model.ReturnUrl.StartsWith("//") && !model.ReturnUrl.StartsWith("/\\"))
-                                    {
-                                        return Redirect(model.ReturnUrl);
-                                    }
-
-                                    message.Message = LocalizationService.GetResourceString("Members.NowLoggedIn");
-                                    message.MessageType = GenericMessages.success;
-
-                                    EventManager.Instance.FireAfterLogin(this, new LoginEventArgs
-                                    {
-                                        UserName = model.UserName,
-                                        Password = model.Password,
-                                        RememberMe = model.RememberMe,
-                                        ReturnUrl = model.ReturnUrl,
-                                        UnitOfWork = unitOfWork
-                                    });
-
-                                    return RedirectToAction("Index", "Home", new { area = string.Empty });
-                                }
-                                //else if (!user.IsApproved && SettingsService.GetSettings().ManuallyAuthoriseNewMembers)
-                                //{
-
-                                //    message.Message = LocalizationService.GetResourceString("Members.NowRegisteredNeedApproval");
-                                //    message.MessageType = GenericMessages.success;
-
-                                //}
-                                //else if (!user.IsApproved && SettingsService.GetSettings().NewMemberEmailConfirmation == true)
-                                //{
-
-                                //    message.Message = LocalizationService.GetResourceString("Members.MemberEmailAuthorisationNeeded");
-                                //    message.MessageType = GenericMessages.success;
-                                //}
-                            }
-
-                            // Only show if we have something to actually show to the user
-                            if (!string.IsNullOrEmpty(message.Message))
-                            {
-                                TempData[AppConstants.MessageViewBagName] = message;
-                            }
-                            else
-                            {
-                                // get here Login failed, check the login status
-                                var loginStatus = MembershipService.LastLoginStatus;
-
-                                switch (loginStatus)
-                                {
-                                    case LoginAttemptStatus.UserNotFound:
-                                    case LoginAttemptStatus.PasswordIncorrect:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordIncorrect"));
-                                        break;
-
-                                    case LoginAttemptStatus.PasswordAttemptsExceeded:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordAttemptsExceeded"));
-                                        break;
-
-                                    case LoginAttemptStatus.UserLockedOut:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserLockedOut"));
-                                        break;
-
-                                    case LoginAttemptStatus.UserNotApproved:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserNotApproved"));
-                                        user = MembershipService.GetUser(username);
-                                        SendEmailConfirmationEmail(user);
-                                        break;
-
-                                    default:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.LogonGeneric"));
-                                        break;
-                                }
                             }
                         }
+                        else
+                        {
+                            //從CRM Login結束後過來的
+                            if (MembershipService.ValidateUser(e.MembershipUser.UserName, password, System.Web.Security.Membership.MaxInvalidPasswordAttempts))
+                            {
+                                //user = MembershipService.GetUserByEmail(username);
+                                user = e.MembershipUser;
+                            }
+                        }
+                            
+                        if (user.IsApproved && !user.IsLockedOut)
+                        {
+                            FormsAuthentication.SetAuthCookie(user.UserName, model.RememberMe);
+                            user.LastLoginDate = DateTime.UtcNow;
+
+                            if (Url.IsLocalUrl(model.ReturnUrl) && model.ReturnUrl.Length > 1 && model.ReturnUrl.StartsWith("/")
+                                && !model.ReturnUrl.StartsWith("//") && !model.ReturnUrl.StartsWith("/\\"))
+                            {
+                                return Redirect(model.ReturnUrl);
+                            }
+
+                            message.Message = LocalizationService.GetResourceString("Members.NowLoggedIn");
+                            message.MessageType = GenericMessages.success;
+
+                            EventManager.Instance.FireAfterLogin(this, new LoginEventArgs
+                            {
+                                UserName = model.UserName,
+                                Password = model.Password,
+                                RememberMe = model.RememberMe,
+                                ReturnUrl = model.ReturnUrl,
+                                MembershipService = MembershipService,
+                                MembershipUser = user,
+                            });
+
+                            return RedirectToAction("Index", "Home", new { area = string.Empty });
+                        }
+                        //else if (!user.IsApproved && SettingsService.GetSettings().ManuallyAuthoriseNewMembers)
+                        //{
+
+                        //    message.Message = LocalizationService.GetResourceString("Members.NowRegisteredNeedApproval");
+                        //    message.MessageType = GenericMessages.success;
+
+                        //}
+                        //else if (!user.IsApproved && SettingsService.GetSettings().NewMemberEmailConfirmation == true)
+                        //{
+
+                        //    message.Message = LocalizationService.GetResourceString("Members.MemberEmailAuthorisationNeeded");
+                        //    message.MessageType = GenericMessages.success;
+                        //}
+                            
+
+
+                        #region 錯誤訊息處理
+                        // Only show if we have something to actually show to the user
+                        if (!string.IsNullOrEmpty(message.Message))
+                        {
+                            TempData[AppConstants.MessageViewBagName] = message;
+                        }
+                        else
+                        {
+                            // get here Login failed, check the login status
+                            var loginStatus = MembershipService.LastLoginStatus;
+
+                            switch (loginStatus)
+                            {
+                                case LoginAttemptStatus.UserNotFound:
+                                case LoginAttemptStatus.PasswordIncorrect:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordIncorrect"));
+                                    break;
+
+                                case LoginAttemptStatus.PasswordAttemptsExceeded:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordAttemptsExceeded"));
+                                    break;
+
+                                case LoginAttemptStatus.UserLockedOut:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserLockedOut"));
+                                    break;
+
+                                case LoginAttemptStatus.UserNotApproved:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserNotApproved"));
+                                    SendEmailConfirmationEmail(user);
+                                    break;
+
+                                default:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.LogonGeneric"));
+                                    break;
+                            }
+                        }
+                        #endregion
                     }
                 }
 
@@ -752,8 +774,8 @@ namespace MVCForum.Website.Controllers
                         unitOfWork.Rollback();
                         LoggingService.Error(ex);
                     }
-
                 }
+                
 
                 return View(model);
             }
@@ -952,19 +974,20 @@ namespace MVCForum.Website.Controllers
                         changedUsername = true;
                     }
 
-                    // User is trying to update their email address, need to 
-                    // check the email is not already in use
-                    if (userModel.Email != user.Email)
-                    {
-                        // Add get by email address
-                        if (MembershipService.GetUserByEmail(userModel.Email) != null)
-                        {
-                            unitOfWork.Rollback();
-                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateEmail"));
-                            return View(userModel);
-                        }
-                        user.Email = userModel.Email;
-                    }
+                    //不能讓他修改Email
+                    //// User is trying to update their email address, need to 
+                    //// check the email is not already in use
+                    //if (userModel.Email != user.Email)
+                    //{
+                    //    // Add get by email address
+                    //    if (MembershipService.GetUserByEmail(userModel.Email) != null)
+                    //    {
+                    //        unitOfWork.Rollback();
+                    //        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateEmail"));
+                    //        return View(userModel);
+                    //    }
+                    //    user.Email = userModel.Email;
+                    //}
 
                     MembershipService.ProfileUpdated(user);
 

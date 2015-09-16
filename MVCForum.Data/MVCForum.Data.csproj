@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caching\CachingConfiguration.cs" />
+    <Compile Include="Context\CRMContext.cs" />
     <Compile Include="Context\MVCForumContext.cs" />
     <Compile Include="Mapping\ActivityMapping.cs" />
     <Compile Include="Mapping\BlockMapping.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Mapping\TopicNotificationMapping.cs" />
     <Compile Include="Mapping\TopicTagMapping.cs" />
     <Compile Include="Mapping\UploadedFileMapping.cs" />
+    <Compile Include="Mapping\UserRegistrationMapping.cs" />
     <Compile Include="Mapping\VoteMapping.cs" />
     <Compile Include="Mapping\PrivateMessageMapping.cs" />
     <Compile Include="Mapping\PostMapping.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Repositories\BannedEmailRepository.cs" />
     <Compile Include="Repositories\BlockRepository.cs" />
     <Compile Include="Repositories\CategoryNotificationRepository.cs" />
+    <Compile Include="Repositories\UserRegistrationRespository.cs" />
     <Compile Include="Repositories\EmailRepository.cs" />
     <Compile Include="Repositories\GlobalPermissionForRoleRepository.cs" />
     <Compile Include="Repositories\CategoryPermissionForRoleRepository.cs" />

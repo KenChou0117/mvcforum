@@ -46,13 +46,13 @@ namespace MVCForum.Website.Events
                 if (e.MembershipUser == null)
                 {
                     #region 取回不重複的UserName
-                    string userName = String.Format("{0}_{1}", crmUser.FirstName, crmUser.LastName);
+                    string userName = String.Format("{0}{1}", crmUser.FirstName, crmUser.LastName);
                     string autoUserName = userName;
                     int index = 1;
                     var existsUser = e.MembershipService.GetUser(userName, true);
                     while (existsUser != null)
                     {
-                        autoUserName = String.Format("{0}_{1}", userName, index.ToString());
+                        autoUserName = userName + index.ToString();
                         existsUser = e.MembershipService.GetUser(autoUserName, true);
                         index++;
                     }
@@ -62,11 +62,11 @@ namespace MVCForum.Website.Events
                         UserName = autoUserName,
                         Email = e.UserName,
                         Password = e.Password,
-                        IsApproved = true,
+                        IsApproved = crmUser.IsActivate,
                         Comment = String.Empty
                     };
                     var createStatus = e.MembershipService.CreateUser(userToSave);
-                    if (createStatus == Domain.DomainModel.MembershipCreateStatus.Success && userToSave.IsApproved)
+                    if (createStatus == Domain.DomainModel.MembershipCreateStatus.Success)
                     {
                         //建立成功，Login User
                         FormsAuthentication.SetAuthCookie(userToSave.UserName, e.RememberMe);
