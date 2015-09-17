@@ -187,6 +187,12 @@ namespace MVCForum.Services
                 return false;
             }
 
+            if (user.IsBanned)
+            {
+                _lastLoginStatus = LoginAttemptStatus.Banned;
+                return false;                
+            }
+
             if (user.IsLockedOut)
             {
                 _lastLoginStatus = LoginAttemptStatus.UserLockedOut;

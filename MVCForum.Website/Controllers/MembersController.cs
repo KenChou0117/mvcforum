@@ -108,7 +108,7 @@ namespace MVCForum.Website.Controllers
 
                     if (!user.Roles.Any(x => x.RoleName.Contains(AppConstants.AdminRoleName)))
                     {
-                        user.IsLockedOut = true;
+                        user.IsBanned = true;
 
                         try
                         {
@@ -391,12 +391,21 @@ namespace MVCForum.Website.Controllers
                         // Create a HttpPostedFileBase image from the C# Image
                         using (var stream = new MemoryStream())
                         {
+                            // Microsoft doesn't give you a file extension - See if it has a file extension
+                            // Get the file extension
+                            var fileExtension = Path.GetExtension(fileName);
+                            if (string.IsNullOrEmpty(fileExtension))
+                            {
+                                // no file extension so give it one
+                                fileName = string.Concat(fileName, ".jpg");
+                            }
+
                             image.Save(stream, ImageFormat.Jpeg);
                             stream.Position = 0;
                             HttpPostedFileBase formattedImage = new MemoryFile(stream, "image/jpeg", fileName);
 
                             // Upload the file
-                            var uploadResult = AppHelpers.UploadFile(formattedImage, uploadFolderPath, LocalizationService);
+                            var uploadResult = AppHelpers.UploadFile(formattedImage, uploadFolderPath, LocalizationService, true);
 
                             // Don't throw error if problem saving avatar, just don't save it.
                             if (uploadResult.UploadSuccessful)
@@ -415,6 +424,10 @@ namespace MVCForum.Website.Controllers
                     if (userModel.LoginType == LoginType.Google)
                     {
                         userToSave.GoogleAccessToken = userModel.UserAccessToken;
+                    }
+                    if (userModel.LoginType == LoginType.Google)
+                    {
+                        userToSave.MicrosoftAccessToken = userModel.UserAccessToken;
                     }
 
                     // Set the view bag message here
@@ -639,10 +652,6 @@ namespace MVCForum.Website.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        // We have an event here to help with Single Sign Ons
-                        // You can do manual lookups to check users based on a webservice and validate a user
-                        // Then log them in if they exist or create them and log them in - Have passed in a UnitOfWork
-                        // To allow database changes.
                         var message = new GenericMessageViewModel();
                         var user = new MembershipUser();
                         var e = new LoginEventArgs
@@ -675,7 +684,7 @@ namespace MVCForum.Website.Controllers
                             }
                         }
                         
-                        if (user.IsApproved && !user.IsLockedOut)
+                        if (user.IsApproved && !user.IsLockedOut && !user.IsBanned)
                         {
                             FormsAuthentication.SetAuthCookie(user.UserName, model.RememberMe);
                             user.LastLoginDate = DateTime.UtcNow;
@@ -698,25 +707,8 @@ namespace MVCForum.Website.Controllers
                                 MembershipService = MembershipService,
                                 MembershipUser = user,
                             });
-
                             return RedirectToAction("Index", "Home", new { area = string.Empty });
                         }
-                        //else if (!user.IsApproved && SettingsService.GetSettings().ManuallyAuthoriseNewMembers)
-                        //{
-
-                        //    message.Message = LocalizationService.GetResourceString("Members.NowRegisteredNeedApproval");
-                        //    message.MessageType = GenericMessages.success;
-
-                        //}
-                        //else if (!user.IsApproved && SettingsService.GetSettings().NewMemberEmailConfirmation == true)
-                        //{
-
-                        //    message.Message = LocalizationService.GetResourceString("Members.MemberEmailAuthorisationNeeded");
-                        //    message.MessageType = GenericMessages.success;
-                        //}
-                            
-
-
                         #region 錯誤訊息處理
                         // Only show if we have something to actually show to the user
                         if (!string.IsNullOrEmpty(message.Message))
@@ -727,7 +719,6 @@ namespace MVCForum.Website.Controllers
                         {
                             // get here Login failed, check the login status
                             var loginStatus = MembershipService.LastLoginStatus;
-
                             switch (loginStatus)
                             {
                                 case LoginAttemptStatus.UserNotFound:
@@ -743,8 +734,13 @@ namespace MVCForum.Website.Controllers
                                     ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserLockedOut"));
                                     break;
 
+                                case LoginAttemptStatus.Banned:
+                                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.NowBanned"));
+                                    break;
+
                                 case LoginAttemptStatus.UserNotApproved:
                                     ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserNotApproved"));
+                                    user = MembershipService.GetUser(username);
                                     SendEmailConfirmationEmail(user);
                                     break;
 
@@ -753,8 +749,8 @@ namespace MVCForum.Website.Controllers
                                     break;
                             }
                         }
-                        #endregion
                     }
+                    #endregion
                 }
 
                 finally
@@ -769,8 +765,6 @@ namespace MVCForum.Website.Controllers
                         LoggingService.Error(ex);
                     }
                 }
-                
-
                 return View(model);
             }
         }
@@ -1052,20 +1046,12 @@ namespace MVCForum.Website.Controllers
                 count = _privateMessageService.NewPrivateMessageCount(LoggedOnReadOnlyUser.Id);
             }
 
-            //if (count > 0)
-            //{
-            //    TempData[AppConstants.MessageViewBagName] = new GenericMessageViewModel
-            //    {
-            //        Message = LocalizationService.GetResourceString("Member.HasNewPrivateMessages"),
-            //        MessageType = GenericMessages.info
-            //    };
-            //}
-
+            var canViewPms = settings.EnablePrivateMessages && LoggedOnReadOnlyUser != null && LoggedOnReadOnlyUser.DisablePrivateMessages != true;
             var viewModel = new ViewAdminSidePanelViewModel
             {
                 CurrentUser = LoggedOnReadOnlyUser,
-                NewPrivateMessageCount = count,
-                CanViewPrivateMessages = settings.EnablePrivateMessages && LoggedOnReadOnlyUser != null &&  LoggedOnReadOnlyUser.DisablePrivateMessages != true,
+                NewPrivateMessageCount = canViewPms ? count : 0,
+                CanViewPrivateMessages = canViewPms,
                 IsDropDown = isDropDown
             };
             
