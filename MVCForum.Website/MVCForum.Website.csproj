@@ -316,7 +316,7 @@
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\VoteController.cs" />
-    <Compile Include="Events\ExampleBeforeLogin.cs" />
+    <Compile Include="Events\CrmLogin.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
