@@ -11,10 +11,10 @@
                 </a>
             </p>
         }
-        else
+        @*else
         {
             @Html.LanguageString("Facebook.Error.EnabledButNotAddedKeys")
-        }
+        }*@
         
         @if (!string.IsNullOrEmpty(SiteConstants.GooglePlusAppId) && !string.IsNullOrEmpty(SiteConstants.GooglePlusAppSecret))
         {
@@ -24,10 +24,10 @@
                 </a>
             </p>
         }
-        else
+        @*else
         {
             @Html.LanguageString("Google.Error.EnabledButNotAddedKeys")
-        }
+        }*@
     </div>
 
     <div class="loginortext">
