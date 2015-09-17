@@ -25,7 +25,7 @@ $(function () {
             e.preventDefault();
             $('.mobilenavbar-inner ul.nav').slideToggle();
         });
-    }   
+    }
 
     // Topic Methods
     ShowPostOptions();
@@ -111,10 +111,10 @@ $(function () {
 
 });
 
-var ShowPostOptions = function() {
+var ShowPostOptions = function () {
     var postOptionButton = $(".postoptions");
     if (postOptionButton.length > 0) {
-        postOptionButton.click(function(e) {
+        postOptionButton.click(function (e) {
             var thisButton = $(this);
             var postadmin = thisButton.closest(".postadmin");
             var postAdminList = postadmin.find(".postadminlist");
@@ -123,7 +123,7 @@ var ShowPostOptions = function() {
     }
 };
 
-var TopicShowMorePosts = function() {
+var TopicShowMorePosts = function () {
     var smp = $(".showmoreposts");
     if (smp.length > 0) {
         smp.click(function (e) {
@@ -184,7 +184,7 @@ var TopicShowMorePosts = function() {
     }
 }
 
-var PostGetAllLikes = function() {
+var PostGetAllLikes = function () {
     var othersliked = $('.othersliked a');
     if (othersliked.length > 0) {
         othersliked.click(function (e) {
@@ -302,7 +302,7 @@ var emailsubscription = function () {
                     ShowUserMessage("Error: " + xhr.status + " " + thrownError);
                 }
             });
-        }); 
+        });
     }
 };
 
@@ -403,7 +403,7 @@ var PmShowMorePosts = function () {
 var blockMember = function () {
     var blockMemberButton = $(".pm-block");
     if (blockMemberButton.length > 0) {
-        blockMemberButton.click(function(e) {
+        blockMemberButton.click(function (e) {
             e.preventDefault();
             var pmButton = $(this);
             var blockText = pmButton.data("blocktext");
@@ -416,7 +416,7 @@ var blockMember = function () {
             } else {
                 pmButton.text(blockedText);
             }
-            
+
             var viewModel = new Object();
             viewModel.MemberToBlockOrUnBlock = userid;
 
@@ -558,21 +558,38 @@ var hideSlideOutPanel = function () {
         if ($(event.target).is(".cd-panel") || $(event.target).is(".cd-panel-close")) {
             // Confirm they want to close it
             var closeconfirmationText = panel.data("confirmationtext");
-            if (confirm(closeconfirmationText)) {
-                event.preventDefault();
-                panel.removeClass("is-visible");
-                //Clear fields
-                var contentDiv = panel.find(".cd-panel-content");
-                contentDiv.html(largeSpinnerBlock);
-                var titleDiv = panel.find(".cd-panel-header h6");
-                titleDiv.html("");
-                $("body").css("overflow", "").css("height", "");
-                $("html").css("overflow", "").css("height", "");
+
+            if (typeof tinyMCE != "undefined") {
+                var pmMessage = tinyMCE.activeEditor.getContent();
+                if (pmMessage != "") {
+                    if (confirm(closeconfirmationText)) {
+                        hardPanelClose(event, panel);
+                    }
+                } else {
+                    hardPanelClose(event, panel);
+                }
+            } else {
+                hardPanelClose(event, panel);
             }
             return false;
         }
     });
 };
+
+var hardPanelClose = function (event, panel) {
+    event.preventDefault();
+    panel.removeClass("is-visible");
+    //Clear fields
+    var contentDiv = panel.find(".cd-panel-content");
+    contentDiv.html(largeSpinnerBlock);
+    var titleDiv = panel.find(".cd-panel-header h6");
+    titleDiv.html("");
+    $("body").css("overflow", "").css("height", "");
+    $("html").css("overflow", "").css("height", "");
+    //remove onbeforeunload event registered by TinyMCE
+    window.onbeforeunload = function () { };
+};
+
 var closeSlideOutPanel = function () {
     var panel = $(".cd-panel");
     panel.trigger("click");
@@ -711,7 +728,7 @@ function AddPostClickEvents() {
         var voteText = voteLink.data('votetext');
         var votedText = voteLink.data('votedtext');
         var hasVoted = voteLink.data('hasvoted');
-       
+
         // Remove all vote links
         //holdingUl.find(".votelink").fadeOut("fast");
 
