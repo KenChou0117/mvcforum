@@ -976,7 +976,7 @@ namespace MVCForum.Website.Controllers
                     //    }
                     //    user.Email = userModel.Email;
                     //}
-
+                    userModel.Email = user.Email;
                     MembershipService.ProfileUpdated(user);
 
                     ShowMessage(new GenericMessageViewModel
