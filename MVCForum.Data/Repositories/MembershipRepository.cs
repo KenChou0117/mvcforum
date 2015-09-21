@@ -45,6 +45,18 @@ namespace MVCForum.Data.Repositories
         }
 
         /// <summary>
+        /// Return a user by CrmID
+        /// </summary>
+        /// <param name="crmId"></param>
+        /// <returns></returns>
+        public MembershipUser GetUserByCrmId(int crmId)
+        {
+            return _context.MembershipUser
+                .Include(x => x.Roles)
+                .FirstOrDefault(name => name.CrmID == crmId);
+        }
+
+        /// <summary>
         /// Returns a user by their facebook id
         /// </summary>
         /// <param name="facebookId"></param>

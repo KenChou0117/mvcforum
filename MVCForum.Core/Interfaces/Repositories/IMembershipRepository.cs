@@ -7,6 +7,7 @@ namespace MVCForum.Domain.Interfaces.Repositories
     public partial interface IMembershipRepository
     {
         MembershipUser GetUser(string username, bool removeTracking = false);
+        MembershipUser GetUserByCrmId(int CrmId);
         MembershipUser GetUserByFacebookId(long facebookId);
         MembershipUser GetUserByTwitterId(string twitterId);
         MembershipUser GetUserByGoogleId(string googleId);

@@ -40,11 +40,11 @@ namespace MVCForum.Website.Events
             var crmUser = userRegistrationService.Get(e.UserName, e.Password);
             if (crmUser != null)
             {
-                //檢查USER存在FORUM DB嗎?? 用email找出對應user
-                e.MembershipUser = e.MembershipService.GetUserByEmail(e.UserName);
-                // 如果user不存在，幫他建一個帳號
+                //檢查USER存在FORUM DB嗎?? 用CRM ID找出對應User
+                e.MembershipUser = e.MembershipService.GetUserByCrmId(crmUser.CustomerID);
                 if (e.MembershipUser == null)
                 {
+                    // 如果user不存在，幫他建一個帳號
                     #region 取回不重複的UserName
                     string userName = String.Format("{0}_{1}", crmUser.FirstName, crmUser.LastName);
                     string autoUserName = userName;
@@ -58,7 +58,7 @@ namespace MVCForum.Website.Events
                     }
                     #endregion
                     var userToSave = new MVCForum.Domain.DomainModel.MembershipUser
-                    {                  
+                    {
                         UserName = autoUserName,
                         Email = e.UserName,
                         Password = e.Password,
@@ -67,19 +67,14 @@ namespace MVCForum.Website.Events
                         CrmID = crmUser.CustomerID,
                     };
                     var createStatus = e.MembershipService.CreateUser(userToSave);
-                    e.LoggingService.Error(String.Format("CRM User Login: account '{0}' create status: {1}", e.UserName, createStatus));
-                    if (createStatus == Domain.DomainModel.MembershipCreateStatus.Success && userToSave.IsApproved)
-                    {
-                        //建立成功，Login User
-                        FormsAuthentication.SetAuthCookie(userToSave.UserName, e.RememberMe);
-                        HttpContext.Current.Response.Redirect("~/");
-                    }
-                    else
-                    {
-                        //建立失敗
-
-                    }
                     e.MembershipUser = userToSave;
+                }
+                else
+                {
+                    if (!e.MembershipUser.Email.Equals(crmUser.Email))
+                    {
+                        e.MembershipUser.Email = crmUser.Email;
+                    }
                 }
             }
             else

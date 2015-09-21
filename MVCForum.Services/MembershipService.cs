@@ -377,6 +377,16 @@ namespace MVCForum.Services
         }
 
         /// <summary>
+        /// Get a User By CrmId
+        /// </summary>
+        /// <param name="crmId"></param>
+        /// <returns></returns>
+        public MembershipUser GetUserByCrmId(int crmId)
+        {
+            return _membershipRepository.GetUserByCrmId(crmId);
+        }
+
+        /// <summary>
         /// Get a user by email address
         /// </summary>
         /// <param name="email"></param>
