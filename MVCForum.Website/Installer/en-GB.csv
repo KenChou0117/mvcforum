@@ -244,6 +244,7 @@ Category.AllCategories,All Categories
 Category.MostRecent,Most recent:
 Members.LogonFacebookButton,Login with Facebook
 Members.LogonGoogleButton,Login with Google
+Members.LogonLinkedInButton,Login with LinkedIn
 Twitter.Error.EnabledButNotAddedKeys,You have enabled social logins but not added the Twitter id and secret key in the web.config
 Error.EmailIsBanned,The email address or domain you are trying to use is banned
 Post.FilesUploaded,Files uploaded successfully

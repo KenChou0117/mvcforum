@@ -55,6 +55,7 @@ namespace MVCForum.Website.ViewModels
         public string SocialProfileImageUrl { get; set; }
         public string UserAccessToken { get; set; }
         public LoginType LoginType { get; set; }
+        public string SocialId { get; set; }
     }
 
     public class MemberFrontEndEditViewModel

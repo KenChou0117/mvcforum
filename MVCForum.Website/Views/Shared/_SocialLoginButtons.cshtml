@@ -43,6 +43,19 @@
             @Html.LanguageString("Google.Error.EnabledButNotAddedKeys")
         }*@
 
+        @if (!string.IsNullOrEmpty(SiteConstants.LinkedInAppId) && !string.IsNullOrEmpty(SiteConstants.LinkedInAppSecret))
+        {
+            <p>
+                <a class="btn-mvc btn-mvc-large btn-mvc-fullwidth microsoftloginbutton" href="@Url.Action("LinkedInLogin", "LinkedInOAuth")">
+                    <i class="fa fa-linkedin"></i> @Html.LanguageString("Members.LogonLinkedInButton")
+                </a>
+            </p>
+        }
+        @*else
+        {
+            @Html.LanguageString("Google.Error.EnabledButNotAddedKeys")
+        }*@
+
     </div>
 
     <div class="loginortext">

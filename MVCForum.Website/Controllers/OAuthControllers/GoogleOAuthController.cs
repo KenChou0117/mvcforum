@@ -200,7 +200,8 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                                 Password = StringUtils.RandomString(8),
                                 UserName = user.Name,
                                 SocialProfileImageUrl = user.Picture,
-                                UserAccessToken = info.RefreshToken
+                                UserAccessToken = info.RefreshToken,
+                                SocialId = user.Id
                             };
 
                             // Store the viewModel in TempData - Which we'll use in the register logic

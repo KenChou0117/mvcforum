@@ -11,30 +11,21 @@ using MVCForum.Website.Controllers;
 
 namespace MVCForum.Website.Events
 {
-    // In this example I am adding an event to intercept when someone tries to login
-    // The example below would be for a single sign on solution - Where you verify the user against a seperate 
-    // database and log them in.
     public class CrmLogin : IEventHandler 
     {
         // Register the events here
         public void RegisterHandlers(EventManager theEventManager)
         {
-            // TODO - Uncomment this line below to fire the method
             theEventManager.BeforeLogin += BeforeLogin;
         }
 
         // Method that's fired when the event is raised
         private void BeforeLogin(object sender, LoginEventArgs e)
         {
-            // Firstly, I'm going to cancel the event (Optional)
             e.Cancel = true;
 
             // Sender is the MembersController            
             //var membersController = sender as MembersController;
-            
-            // Here I would go off to a webservice, API or custom code and check the username and password is correct
-            // against the other database. if it is log them in
-            //TODO - Go validate e.UserName and e.Password
             var userRegistrationService = ServiceFactory.Get<IUserRegistrationService>();
             //檢查USER存在CRM DB嗎??
             var crmUser = userRegistrationService.Get(e.UserName, e.Password);

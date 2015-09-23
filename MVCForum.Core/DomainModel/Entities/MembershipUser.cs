@@ -69,6 +69,8 @@ namespace MVCForum.Domain.DomainModel
         public string GoogleId { get; set; }
         public string MicrosoftAccessToken { get; set; }
         public string MicrosoftId { get; set; }
+        public string LinkedInId { get; set; }
+        public string LinkedInAccessToken { get; set; }
         public bool? IsExternalAccount { get; set; }
         public bool? TwitterShowFeed { get; set; }
         public DateTime? LoginIdExpires { get; set; }

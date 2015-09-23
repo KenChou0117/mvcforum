@@ -5,6 +5,7 @@ namespace MVCForum.Website.Application
 {
     public static partial class SiteConstants
     {
+        #region Social Login Keys
         /// <summary>
         /// Social Login Keys
         /// </summary>
@@ -50,6 +51,21 @@ namespace MVCForum.Website.Application
                 return ConfigurationManager.AppSettings["GooglePlusAppSecret"];
             }
         }
+        public static string LinkedInAppId
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["LinkedInAppId"];
+            }
+        }
+        public static string LinkedInAppSecret
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["LinkedInAppSecret"];
+            }
+        }
+        #endregion
 
         /// <summary>
         /// File Upload Settings

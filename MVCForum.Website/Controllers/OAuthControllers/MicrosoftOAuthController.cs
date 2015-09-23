@@ -199,7 +199,8 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                                     Password = StringUtils.RandomString(8),
                                     UserName = user.Name,
                                     UserAccessToken = accessTokenResponse.Body.AccessToken,
-                                    SocialProfileImageUrl = string.Format("https://apis.live.net/v5.0/{0}/picture", user.Id)
+                                    SocialProfileImageUrl = string.Format("https://apis.live.net/v5.0/{0}/picture", user.Id),
+                                    SocialId = user.Id
                                 };
 
                                 //var uri = string.Concat("https://apis.live.net/v5.0/me?access_token=",viewModel.UserAccessToken);

@@ -385,7 +385,8 @@ namespace MVCForum.Website.Controllers
                         }
 
                         // Get the file name
-                        var fileName = Path.GetFileName(userModel.SocialProfileImageUrl);
+                        //var fileName = Path.GetFileName(userModel.SocialProfileImageUrl);
+                        var fileName = String.Format("{0}_{1}.jpg", userModel.LoginType.ToString(), userModel.SocialId);
 
                         // Create a HttpPostedFileBase image from the C# Image
                         using (var stream = new MemoryStream())
@@ -419,14 +420,23 @@ namespace MVCForum.Website.Controllers
                     if (userModel.LoginType == LoginType.Facebook)
                     {
                         userToSave.FacebookAccessToken = userModel.UserAccessToken;
+                        long fbId = long.MinValue;
+                        userToSave.FacebookId = long.TryParse(userModel.SocialId, out fbId) ? (long?)null : fbId ;
                     }
                     if (userModel.LoginType == LoginType.Google)
                     {
                         userToSave.GoogleAccessToken = userModel.UserAccessToken;
+                        userToSave.GoogleId = userModel.SocialId;
                     }
-                    if (userModel.LoginType == LoginType.Google)
+                    if (userModel.LoginType == LoginType.Microsoft)
                     {
                         userToSave.MicrosoftAccessToken = userModel.UserAccessToken;
+                        userToSave.MicrosoftId = userModel.SocialId;
+                    }
+                    if (userModel.LoginType == LoginType.LinkedIn)
+                    {
+                        userToSave.LinkedInAccessToken = userModel.UserAccessToken;
+                        userToSave.LinkedInId = userModel.SocialId;
                     }
 
                     // Set the view bag message here

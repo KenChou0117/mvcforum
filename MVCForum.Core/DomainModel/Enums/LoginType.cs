@@ -5,6 +5,7 @@
         Facebook,
         Google,
         Microsoft,
+        LinkedIn,
         Standard
     }
 }

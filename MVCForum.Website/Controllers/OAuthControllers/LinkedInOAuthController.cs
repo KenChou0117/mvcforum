@@ -1,27 +1,26 @@
-﻿using System;
-using System.Web.Mvc;
-using System.Web.Security;
-using MVCForum.Domain.Constants;
-using MVCForum.Domain.DomainModel.Enums;
-using MVCForum.Domain.Interfaces.Services;
+﻿using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
-using MVCForum.Utilities;
 using MVCForum.Website.Application;
 using MVCForum.Website.Areas.Admin.ViewModels;
+using System;
+using System.Web.Mvc;
+using Skybrud.Social;
+using Skybrud.Social.LinkedIn.OAuth2;
+using System.Collections.Specialized;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using MVCForum.Website.ViewModels.OAuth;
+using System.Web.Security;
 using MVCForum.Website.ViewModels;
-using Skybrud.Social.Facebook;
-using Skybrud.Social.Facebook.OAuth;
-using Skybrud.Social.Facebook.Options.User;
+using MVCForum.Domain.DomainModel.Enums;
+using MVCForum.Utilities;
+using MVCForum.Domain.Constants;
 
 namespace MVCForum.Website.Controllers.OAuthControllers
 {
-    // Facebook uses OAuth 2.0 for authentication and communication. In order for users to authenticate with the Facebook API, 
-    // you must specify the ID, secret and redirect URI of your Facebook app. 
-    // You can create a new app at the following URL: https://developers.facebook.com/
-
-    public partial class FacebookOAuthController : BaseController
+    public class LinkedInOAuthController : BaseController
     {
-        public FacebookOAuthController(ILoggingService loggingService, 
+        public LinkedInOAuthController(ILoggingService loggingService, 
                                         IUnitOfWorkManager unitOfWorkManager, 
                                         IMembershipService membershipService, 
                                         ILocalizationService localizationService, 
@@ -40,7 +39,7 @@ namespace MVCForum.Website.Controllers.OAuthControllers
         {
             get
             {
-                return string.Concat(SettingsService.GetSettings().ForumUrl.TrimEnd('/'), Url.Action("FacebookLogin"));
+                return string.Concat(SettingsService.GetSettings().ForumUrl.TrimEnd('/'), Url.Action("LinkedInLogin"));
             }
         }
 
@@ -63,11 +62,6 @@ namespace MVCForum.Website.Controllers.OAuthControllers
             get { return Request.QueryString["state"]; }
         }
 
-        public string AuthErrorReason
-        {
-            get { return Request.QueryString["error_reason"]; }
-        }
-
         public string AuthError
         {
             get { return Request.QueryString["error"]; }
@@ -78,13 +72,9 @@ namespace MVCForum.Website.Controllers.OAuthControllers
             get { return Request.QueryString["error_description"]; }
         }
 
-        public ActionResult FacebookLogin()
+        public ActionResult LinkedInLogin()
         {
             var resultMessage = new GenericMessageViewModel();
-
-            Callback = Request.QueryString["callback"];
-            ContentTypeAlias = Request.QueryString["contentTypeAlias"];
-            PropertyAlias = Request.QueryString["propertyAlias"];
 
             if (AuthState != null)
             {
@@ -98,10 +88,10 @@ namespace MVCForum.Website.Controllers.OAuthControllers
             }
 
             // Get the prevalue options
-            if (string.IsNullOrEmpty(SiteConstants.FacebookAppId) ||
-                string.IsNullOrEmpty(SiteConstants.FacebookAppSecret))
+            if (string.IsNullOrEmpty(SiteConstants.LinkedInAppId) ||
+                string.IsNullOrEmpty(SiteConstants.LinkedInAppSecret))
             {
-                resultMessage.Message = "You need to add the Facebook app credentials";
+                resultMessage.Message = "You need to add the LinkedIn app credentials";
                 resultMessage.MessageType = GenericMessages.danger;
             }
             else
@@ -109,10 +99,10 @@ namespace MVCForum.Website.Controllers.OAuthControllers
 
                 // Settings valid move on
                 // Configure the OAuth client based on the options of the prevalue options
-                var client = new FacebookOAuthClient
+                var client = new LinkedInOAuthClient
                 {
-                    AppId = SiteConstants.FacebookAppId,
-                    AppSecret = SiteConstants.FacebookAppSecret,
+                    ApiKey = SiteConstants.LinkedInAppId,
+                    ApiSecret = SiteConstants.LinkedInAppSecret,
                     RedirectUri = ReturnUrl
                 };
 
@@ -141,14 +131,13 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                     Session["MVCForum_" + state] = new[] { Callback, ContentTypeAlias, PropertyAlias };
 
                     // Construct the authorization URL
-                    var url = client.GetAuthorizationUrl(state, "public_profile", "email"); //"user_friends"
-
+                    var url = client.GetAuthorizationUrl(state, "r_basicprofile r_emailaddress");
                     // Redirect the user
                     return Redirect(url);
                 }
 
                 // Exchange the authorization code for a user access token
-                var userAccessToken = string.Empty;
+                LinkedInAccessTokenResponse userAccessToken = null;
                 try
                 {
                     userAccessToken = client.GetAccessTokenFromAuthCode(AuthCode);
@@ -159,36 +148,43 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                     resultMessage.MessageType = GenericMessages.danger;
                 }
 
+                #region 取得User Information
                 try
                 {
-                    if (string.IsNullOrEmpty(resultMessage.Message))
+                    if(string.IsNullOrEmpty(resultMessage.Message))
                     {
-                        // Initialize the Facebook service (no calls are made here)
-                        var service = FacebookService.CreateFromAccessToken(userAccessToken);
+                        // Declare the base URL
+                        //https://api.linkedin.com/v1/people/~:(id,first-name,last-name,picture-url,email-address,headline)?format=xml
+                        string url = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,picture-url,email-address,headline)?format=json";
 
-                        // Declare the options for the call to the API
-                        var options = new FacebookGetUserOptions
-                        {
-                            Identifier = "me",
-                            Fields = new[] { "id", "name", "email", "first_name", "last_name", "gender" }
+                        // Declare the query string
+                        NameValueCollection query = new NameValueCollection {
+                            {"oauth2_access_token", userAccessToken.AccessToken}
                         };
 
-                        var user = service.Users.GetUser(options);
-
-                        // Try to get the email - Some FB accounts have protected passwords
-                        var email = user.Body.Email;
-                        if (string.IsNullOrEmpty(email))
+                        // Make the request and return the response body
+                        string retJson = SocialUtils.DoHttpGetRequestAndGetBodyAsString(url, query);
+                        //<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+                        //<person>
+                        //    <id>dE-vTGN6yQ</id>
+                        //    <first-name>Chih Wei</first-name>
+                        //    <last-name>Huang</last-name>
+                        //    <picture-url>https://media.licdn.com/mpr/mprx/0_UBEYu6bONxaCgLQHMrHTu5qYZgoi0LcHMzY3u59ObZO-hTheclstGLCrn1EjyG9XsNe8_GHVkR2b</picture-url>
+                        //    <email-address>wezmag@gmail.com</email-address>
+                        //    <headline>Software Engineer, Web Developer, ASP.NET Developer</headline>
+                        //</person>
+                        var user = JsonConvert.DeserializeObject<LinkedInOAuthData>(retJson);
+                        if (string.IsNullOrEmpty(user.Email))
                         {
                             resultMessage.Message = LocalizationService.GetResourceString("Members.UnableToGetEmailAddress");
                             resultMessage.MessageType = GenericMessages.danger;
                             ShowMessage(resultMessage);
                             return RedirectToAction("LogOn", "Members");
                         }
-
                         // First see if this user has registered already - Use email address
                         using (UnitOfWorkManager.NewUnitOfWork())
                         {
-                            var userExists = MembershipService.GetUserByEmail(email);
+                            var userExists = MembershipService.GetUserByEmail(user.Email);
 
                             if (userExists != null)
                             {
@@ -211,24 +207,15 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                                 // Not registered already so register them
                                 var viewModel = new MemberAddViewModel
                                 {
-                                    Email = email,
-                                    LoginType = LoginType.Facebook,
+                                    Email = user.Email,
+                                    LoginType = LoginType.LinkedIn,
                                     Password = StringUtils.RandomString(8),
-                                    UserName = user.Body.Name,
-                                    UserAccessToken = userAccessToken,
-                                    SocialId = user.Body.Id
+                                    UserName = String.Format("{0} {1}", user.FirstName, user.LastName),
+                                    UserAccessToken = userAccessToken.AccessToken,
+                                    SocialProfileImageUrl = user.PictureUrl,
+                                    SocialId = user.Id
                                 };
 
-                                // Get the image and save it
-                                var getImageUrl = string.Format("http://graph.facebook.com/{0}/picture?type=square", user.Body.Id);
-                                viewModel.SocialProfileImageUrl = getImageUrl;
-
-                                //Large size photo https://graph.facebook.com/{facebookId}/picture?type=large
-                                //Medium size photo https://graph.facebook.com/{facebookId}/picture?type=normal
-                                //Small size photo https://graph.facebook.com/{facebookId}/picture?type=small
-                                //Square photo https://graph.facebook.com/{facebookId}/picture?type=square
-
-                                // Store the viewModel in TempData - Which we'll use in the register logic
                                 TempData[AppConstants.MemberRegisterViewModel] = viewModel;
 
                                 return RedirectToAction("SocialLoginValidator", "Members");
@@ -242,7 +229,7 @@ namespace MVCForum.Website.Controllers.OAuthControllers
                     resultMessage.MessageType = GenericMessages.danger;
                     LoggingService.Error(ex);
                 }
-
+                #endregion
             }
 
             ShowMessage(resultMessage);
