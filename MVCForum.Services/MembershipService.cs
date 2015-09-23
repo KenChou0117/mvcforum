@@ -395,6 +395,11 @@ namespace MVCForum.Services
             return _membershipRepository.GetUserBySlug(slug);
         }
 
+        public MembershipUser GetUserByEmpNo(string empno)
+        {
+            return _membershipRepository.GetUserByEmpNo(empno);
+        }
+
         /// <summary>
         /// Gets a user by their facebook id
         /// </summary>

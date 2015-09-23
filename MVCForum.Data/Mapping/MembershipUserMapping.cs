@@ -40,6 +40,8 @@ namespace MVCForum.Data.Mapping
             Property(x => x.Website).IsOptional().HasMaxLength(100);
             Property(x => x.Twitter).IsOptional().HasMaxLength(60);
             Property(x => x.Facebook).IsOptional().HasMaxLength(60);
+            Property(x => x.EmpNo).IsOptional().HasMaxLength(10);
+
             Property(x => x.Avatar).IsOptional().HasMaxLength(500);
             Property(x => x.FacebookAccessToken).IsOptional().HasMaxLength(300);
             Property(x => x.FacebookId).IsOptional();

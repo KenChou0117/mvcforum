@@ -25,6 +25,7 @@ namespace MVCForum.Domain.Interfaces.Services
         MembershipUser GetUser(string username, bool removeTracking = false);
         MembershipUser GetUserByEmail(string email);
         MembershipUser GetUserBySlug(string slug);
+        MembershipUser GetUserByEmpNo(string empNo);
         MembershipUser GetUserByFacebookId(long facebookId);
         MembershipUser GetUserByTwitterId(string twitterId);
         MembershipUser GetUserByGoogleId(string googleId);

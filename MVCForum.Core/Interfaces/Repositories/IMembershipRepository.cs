@@ -17,6 +17,7 @@ namespace MVCForum.Domain.Interfaces.Repositories
         PagedList<MembershipUser> SearchMembers(string search, int pageIndex, int pageSize);
         MembershipUser GetUserBySlug(string slug);
         MembershipUser GetUserByEmail(string slug);
+        MembershipUser GetUserByEmpNo(string empno);
         IList<MembershipUser> GetUserBySlugLike(string slug);
         IList<MembershipUser> GetUsersById(List<Guid> guids);
         IList<MembershipUser> GetAll();

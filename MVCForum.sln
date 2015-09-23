@@ -65,6 +65,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{A1510FC4-7
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCForum.LDAP", "MVCForum.LDAP\MVCForum.LDAP.csproj", "{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{914E8B25-43B7-4653-BECA-E2917607C10C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -283,6 +287,26 @@ Global
 		{097883D7-6C3E-4944-B2D8-A9CC8A9356F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{097883D7-6C3E-4944-B2D8-A9CC8A9356F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{097883D7-6C3E-4944-B2D8-A9CC8A9356F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5E994DFF-33D1-4C62-BF6C-E99F26ECD63C}.Release|x86.ActiveCfg = Release|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{914E8B25-43B7-4653-BECA-E2917607C10C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

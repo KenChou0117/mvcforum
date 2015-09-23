@@ -44,6 +44,13 @@ namespace MVCForum.Data.Repositories
                 //.FirstOrDefault(name => String.Equals(name.UserName, username, StringComparison.CurrentCultureIgnoreCase));
         }
 
+        public MembershipUser GetUserByEmpNo(string empno)
+        {
+            return _context.MembershipUser
+                .Include(x => x.Roles)
+                .FirstOrDefault(x => x.EmpNo.Equals(empno));
+        }
+
         /// <summary>
         /// Returns a user by their facebook id
         /// </summary>

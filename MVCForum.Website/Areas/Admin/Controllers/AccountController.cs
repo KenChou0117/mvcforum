@@ -179,6 +179,10 @@ namespace MVCForum.Website.Areas.Admin.Controllers
                 user.Email = userModel.Email;
                 user.Facebook = userModel.Facebook;
                 user.IsApproved = userModel.IsApproved;
+                if (user.IsLockedOut != userModel.IsLockedOut && !userModel.IsLockedOut)
+                {
+                    user.FailedPasswordAttemptCount = 0;
+                }
                 user.IsLockedOut = userModel.IsLockedOut;
                 user.IsBanned = userModel.IsBanned;
                 user.Location = userModel.Location;

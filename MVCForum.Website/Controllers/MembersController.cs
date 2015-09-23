@@ -21,6 +21,7 @@ using MVCForum.Website.ViewModels;
 using MVCForum.Website.ViewModels.Mapping;
 using MembershipCreateStatus = MVCForum.Domain.DomainModel.MembershipCreateStatus;
 using MembershipUser = MVCForum.Domain.DomainModel.MembershipUser;
+using System.DirectoryServices;
 
 namespace MVCForum.Website.Controllers
 {
@@ -148,7 +149,7 @@ namespace MVCForum.Website.Controllers
                 {
                     if (!user.Roles.Any(x => x.RoleName.Contains(AppConstants.AdminRoleName)))
                     {
-                        user.IsLockedOut = false;
+                        user.IsBanned = false;
 
                         try
                         {
@@ -642,38 +643,125 @@ namespace MVCForum.Website.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOn(LogOnViewModel model)
         {
-            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
-            {
-                var username = model.UserName;
-                var password = model.Password;
+            var username = model.UserName;
+            var password = model.Password;
+            bool isLDAPAuthenticated = false;
 
+            if (ModelState.IsValid)
+            {
+                var message = new GenericMessageViewModel();
+                var user = new MembershipUser();
+                string empNo = String.Empty;
+                MVCForum.LDAP.Service ldap = new MVCForum.LDAP.Service();
                 try
                 {
-                    if (ModelState.IsValid)
+                    // Start LDAP authentication
+                    // LDAP 檢查帳號密碼
+                    if (ldap.Authenticate(username, password))
                     {
-                        // We have an event here to help with Single Sign Ons
-                        // You can do manual lookups to check users based on a webservice and validate a user
-                        // Then log them in if they exist or create them and log them in - Have passed in a UnitOfWork
-                        // To allow database changes.
-
-                        var e = new LoginEventArgs
+                        //LDAP 取得工號
+                        SearchResult entry = ldap.GetUser(username, password);
+                        string email = String.Empty;
+                        string displayName = String.Empty;
+                        string location = String.Empty;
+                        if (entry != null && entry.Properties != null)
                         {
-                            UserName = model.UserName,
-                            Password = model.Password,
-                            RememberMe = model.RememberMe,
-                            ReturnUrl = model.ReturnUrl, 
-                            UnitOfWork = unitOfWork
-                        };
-                        EventManager.Instance.FireBeforeLogin(this, e);
+                            if (entry.Properties["mail"] != null && entry.Properties["mail"].Count > 0)
+                            {
+                                email = entry.Properties["mail"][0].ToString();
+                            }
+                            if (entry.Properties["displayname"] != null && entry.Properties["displayname"].Count > 0)
+                            {
+                                displayName = entry.Properties["displayname"][0].ToString();
+                            }
+                            if (entry.Properties["physicaldeliveryofficename"] != null && entry.Properties["physicaldeliveryofficename"].Count > 0)
+                            {
+                                location = entry.Properties["physicaldeliveryofficename"][0].ToString();
+                            }
+                            if (entry.Properties["initials"] != null && entry.Properties["initials"].Count > 0)
+                            {
+                                empNo = entry.Properties["initials"][0].ToString();
+                            }
+                            //檢查User是否存在Forum DB
+                            if (!empNo.Equals(String.Empty))
+                            {
+                                user = MembershipService.GetUserByEmpNo(empNo);
+                                //user不存在ForumDB，則建立user
+                                if (user == null)
+                                {
+                                    #region 建立user
+                                    var userToSave = new MembershipUser
+                                    {
+                                        UserName = username,
+                                        Email = email,
+                                        Password = Guid.NewGuid().ToString(),
+                                        IsApproved = true,
+                                        Comment = "",
+                                        Signature = displayName,
+                                        Location = location,
+                                        EmpNo = empNo
+                                    };
+                                    using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
+                                    {
 
-                        if (!e.Cancel)
+                                        var createStatus = MembershipService.CreateUser(userToSave);
+                                        isLDAPAuthenticated = createStatus == MembershipCreateStatus.Success;
+                                        if (createStatus != MembershipCreateStatus.Success)
+                                        {
+                                            message.Message = String.Format("{0}({1})", LocalizationService.GetResourceString("Errors.GenericMessage"), createStatus.ToString());
+                                            message.MessageType = GenericMessages.danger;
+                                        }
+
+                                        try
+                                        {
+                                            unitOfWork.Commit();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            unitOfWork.Rollback();
+                                            LoggingService.Error(ex);
+                                            message.Message = String.Format("{0}({1})", LocalizationService.GetResourceString("Errors.GenericMessage"), ex.Message);
+                                            message.MessageType = GenericMessages.danger;
+                                            isLDAPAuthenticated = false;
+                                        }
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+                                    isLDAPAuthenticated = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message.Message = String.Format("{0}({1})", LocalizationService.GetResourceString("Errors.GenericMessage"), ex.Message);
+                    message.MessageType = GenericMessages.danger;
+                    LoggingService.Error(ex);
+                }
+                // end ldap authorisation
+                // 如果沒有錯誤，繼續往下走
+                if (string.IsNullOrEmpty(message.Message))
+                {
+                    using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
+                    {
+                        try
                         {
-                            var message = new GenericMessageViewModel();
-                            var user = new MembershipUser();
-                            if (MembershipService.ValidateUser(username, password, System.Web.Security.Membership.MaxInvalidPasswordAttempts))
+                            if (isLDAPAuthenticated || MembershipService.ValidateUser(username, password, System.Web.Security.Membership.MaxInvalidPasswordAttempts))
                             {
                                 // Set last login date
-                                user = MembershipService.GetUser(username);
+                                if (empNo.Equals(String.Empty))
+                                {
+                                    //Admin沒有EmpNo
+                                    user = MembershipService.GetUser(username);
+                                }
+                                else
+                                {
+                                    user = MembershipService.GetUserByEmpNo(empNo);
+                                }
+                                
                                 if (user.IsApproved && !user.IsLockedOut && !user.IsBanned)
                                 {
                                     FormsAuthentication.SetAuthCookie(username, model.RememberMe);
@@ -688,92 +776,64 @@ namespace MVCForum.Website.Controllers
                                     message.Message = LocalizationService.GetResourceString("Members.NowLoggedIn");
                                     message.MessageType = GenericMessages.success;
 
-                                    EventManager.Instance.FireAfterLogin(this, new LoginEventArgs
-                                    {
-                                        UserName = model.UserName,
-                                        Password = model.Password,
-                                        RememberMe = model.RememberMe,
-                                        ReturnUrl = model.ReturnUrl,
-                                        UnitOfWork = unitOfWork
-                                    });
-
                                     return RedirectToAction("Index", "Home", new { area = string.Empty });
                                 }
-                                //else if (!user.IsApproved && SettingsService.GetSettings().ManuallyAuthoriseNewMembers)
-                                //{
 
-                                //    message.Message = LocalizationService.GetResourceString("Members.NowRegisteredNeedApproval");
-                                //    message.MessageType = GenericMessages.success;
-
-                                //}
-                                //else if (!user.IsApproved && SettingsService.GetSettings().NewMemberEmailConfirmation == true)
-                                //{
-
-                                //    message.Message = LocalizationService.GetResourceString("Members.MemberEmailAuthorisationNeeded");
-                                //    message.MessageType = GenericMessages.success;
-                                //}
                             }
+                        }
 
-                            // Only show if we have something to actually show to the user
-                            if (!string.IsNullOrEmpty(message.Message))
+                        finally
+                        {
+                            try
                             {
-                                TempData[AppConstants.MessageViewBagName] = message;
+                                unitOfWork.Commit();
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                // get here Login failed, check the login status
-                                var loginStatus = MembershipService.LastLoginStatus;
-
-                                switch (loginStatus)
-                                {
-                                    case LoginAttemptStatus.UserNotFound:
-                                    case LoginAttemptStatus.PasswordIncorrect:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordIncorrect"));
-                                        break;
-
-                                    case LoginAttemptStatus.PasswordAttemptsExceeded:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordAttemptsExceeded"));
-                                        break;
-
-                                    case LoginAttemptStatus.UserLockedOut:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserLockedOut"));
-                                        break;
-
-                                    case LoginAttemptStatus.Banned:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.NowBanned"));
-                                        break;
-
-                                    case LoginAttemptStatus.UserNotApproved:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserNotApproved"));
-                                        user = MembershipService.GetUser(username);
-                                        SendEmailConfirmationEmail(user);
-                                        break;
-
-                                    default:
-                                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.LogonGeneric"));
-                                        break;
-                                }
+                                unitOfWork.Rollback();
+                                LoggingService.Error(ex);
                             }
                         }
                     }
                 }
-
-                finally
+                // Only show if we have something to actually show to the user
+                if (!string.IsNullOrEmpty(message.Message))
                 {
-                    try
-                    {
-                        unitOfWork.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        unitOfWork.Rollback();
-                        LoggingService.Error(ex);
-                    }
-
+                    TempData[AppConstants.MessageViewBagName] = message;
                 }
+                else
+                {
+                    // get here Login failed, check the login status
+                    var loginStatus = MembershipService.LastLoginStatus;
 
-                return View(model);
+                    switch (loginStatus)
+                    {
+                        case LoginAttemptStatus.UserNotFound:
+                        case LoginAttemptStatus.PasswordIncorrect:
+                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordIncorrect"));
+                            break;
+
+                        case LoginAttemptStatus.PasswordAttemptsExceeded:
+                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.PasswordAttemptsExceeded"));
+                            break;
+
+                        case LoginAttemptStatus.UserLockedOut:
+                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserLockedOut"));
+                            break;
+
+                        case LoginAttemptStatus.UserNotApproved:
+                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.UserNotApproved"));
+                            //user = MembershipService.GetUser(username);
+                            //SendEmailConfirmationEmail(user);
+                            break;
+
+                        default:
+                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.LogonGeneric"));
+                            break;
+                    }
+                }
             }
+            return View(model);
         }
 
         /// <summary>
