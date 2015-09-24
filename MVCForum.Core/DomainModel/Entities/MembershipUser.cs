@@ -33,6 +33,7 @@ namespace MVCForum.Domain.DomainModel
             Id = GuidComb.GenerateComb();
         }
         public Guid Id { get; set; }
+        public string EmpNo { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string PasswordSalt { get; set; }
@@ -59,7 +60,6 @@ namespace MVCForum.Domain.DomainModel
         public string Website { get; set; }
         public string Twitter { get; set; }
         public string Facebook { get; set; }
-        public string EmpNo { get; set; }
 
         public string Avatar { get; set; }
         public string FacebookAccessToken { get; set; }

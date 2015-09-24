@@ -30,20 +30,25 @@
             <fieldset>
                 <legend>@ViewBag.Title</legend>
 
-                <p class="changepasswordtext">
-                    @Html.Raw(string.Format(Html.LanguageString("Members.ChangePassword.Link"), string.Format("<a href=\"{0}\">{1}</a>", Url.Action("ChangePassword"), Html.LanguageString("Members.ChangePassword.Title"))))
-                </p>
+                @if(Model.EmpNo == "0")
+                {
+                    <p class="changepasswordtext">
+                        @Html.Raw(string.Format(Html.LanguageString("Members.ChangePassword.Link"), string.Format("<a href=\"{0}\">{1}</a>", Url.Action("ChangePassword"), Html.LanguageString("Members.ChangePassword.Title"))))
+                    </p>
+                }
+                <div class="form-group">
+                    @Html.LabelFor(x => x.EmpNo)
+                    <p class="form-control-static">@Model.EmpNo</p>
+                </div>
 
                 <div class="form-group">
                     @Html.LabelFor(x => x.UserName)
-                    @Html.TextBoxFor(x => x.UserName, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(x => x.UserName)
+                    <p class="form-control-static">@Model.UserName</p>
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(x => x.Email)
-                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control", type = "email" })
-                    @Html.ValidationMessageFor(x => x.Email)
+                    <p class="form-control-static">@Model.Email</p>
                 </div>
 
                 @if (!Model.DisableFileUploads)

@@ -11,6 +11,7 @@ namespace MVCForum.Data.Mapping
         {
             HasKey(x => x.Id);
             Property(x => x.Id).IsRequired();
+            Property(x => x.EmpNo).IsOptional().HasMaxLength(10);
             Property(x => x.UserName).IsRequired().HasMaxLength(150)
                                     .HasColumnAnnotation("Index",
                                     new IndexAnnotation(new IndexAttribute("IX_MembershipUser_UserName", 1) { IsUnique = true }));
@@ -40,7 +41,6 @@ namespace MVCForum.Data.Mapping
             Property(x => x.Website).IsOptional().HasMaxLength(100);
             Property(x => x.Twitter).IsOptional().HasMaxLength(60);
             Property(x => x.Facebook).IsOptional().HasMaxLength(60);
-            Property(x => x.EmpNo).IsOptional().HasMaxLength(10);
 
             Property(x => x.Avatar).IsOptional().HasMaxLength(500);
             Property(x => x.FacebookAccessToken).IsOptional().HasMaxLength(300);

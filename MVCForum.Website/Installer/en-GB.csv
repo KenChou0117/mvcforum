@@ -102,6 +102,7 @@ Post.Label.TopicName,Topic Name
 Post.Label.IsStickyTopic,Is Sticky Topic
 Post.Label.LockTopic,Lock Topic
 Post.label.TopicCategory,Topic Category
+Members.Label.EmpNo,Employee Number
 Members.Label.Username,Username
 Members.Label.EmailAddress,Email address (Used by Gravatar to show your Avatar image)
 Members.Label.Password,Password

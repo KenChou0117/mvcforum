@@ -62,6 +62,10 @@ namespace MVCForum.Website.ViewModels
         [Required]
         public Guid Id { get; set; }
 
+        [ForumMvcResourceDisplayName("Members.Label.EmpNo")]
+        [Required]
+        public string EmpNo { get; set; }
+
         [Required]
         [ForumMvcResourceDisplayName("Members.Label.Username")]
         [StringLength(150, MinimumLength = 4)]

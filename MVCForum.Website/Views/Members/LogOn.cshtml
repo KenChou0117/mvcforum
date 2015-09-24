@@ -9,7 +9,7 @@
 
     <div class="col-md-6 col-md-offset-3">
 
-        @Html.Partial("_SocialLoginButtons")
+        @*@Html.Partial("_SocialLoginButtons")*@
 
 
         <div class="mainlogonform">
@@ -21,7 +21,7 @@
                 @Html.ValidationSummary(false)
                 @Html.AntiForgeryToken()
 
-                <p class="help-block">@Html.Raw(string.Format(Html.LanguageString("Members.LogOnMessage"), Html.ActionLink("Register", "Register")))</p>
+                @*<p class="help-block">@Html.Raw(string.Format(Html.LanguageString("Members.LogOnMessage"), Html.ActionLink("Register", "Register")))</p>*@
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.UserName)
@@ -50,12 +50,12 @@
                 @Html.HiddenFor(x => x.ReturnUrl)
             }
         </div>
-
-        <p class="forgotpasswordtext">
+        
+        @*<p class="forgotpasswordtext">
             <a href="@Url.Action("ForgotPassword")">
                 @Html.LanguageString("Members.ForgotPassword.Link")
             </a>
-        </p>
+        </p>*@
 
     </div>
 

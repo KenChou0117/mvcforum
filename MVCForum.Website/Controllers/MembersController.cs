@@ -245,84 +245,86 @@ namespace MVCForum.Website.Controllers
             }
         }
 
-        /// <summary>
-        /// Add a new user
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Register()
-        {
-            if (SettingsService.GetSettings().SuspendRegistration != true)
-            {
-                using (UnitOfWorkManager.NewUnitOfWork())
-                {
-                    var user = MembershipService.CreateEmptyUser();
+        #region Register
+        ///// <summary>
+        ///// Add a new user
+        ///// </summary>
+        ///// <returns></returns>
+        //public ActionResult Register()
+        //{
+        //    if (SettingsService.GetSettings().SuspendRegistration != true)
+        //    {
+        //        using (UnitOfWorkManager.NewUnitOfWork())
+        //        {
+        //            var user = MembershipService.CreateEmptyUser();
 
-                    // Populate empty viewmodel
-                    var viewModel = new MemberAddViewModel
-                    {
-                        UserName = user.UserName,
-                        Email = user.Email,
-                        Password = user.Password,
-                        IsApproved = user.IsApproved,
-                        Comment = user.Comment,
-                        AllRoles = RoleService.AllRoles()
-                    };
+        //            // Populate empty viewmodel
+        //            var viewModel = new MemberAddViewModel
+        //            {
+        //                UserName = user.UserName,
+        //                Email = user.Email,
+        //                Password = user.Password,
+        //                IsApproved = user.IsApproved,
+        //                Comment = user.Comment,
+        //                AllRoles = RoleService.AllRoles()
+        //            };
 
-                    // See if a return url is present or not and add it
-                    var returnUrl = Request["ReturnUrl"];
-                    if (!string.IsNullOrEmpty(returnUrl))
-                    {
-                        viewModel.ReturnUrl = returnUrl;
-                    }
+        //            // See if a return url is present or not and add it
+        //            var returnUrl = Request["ReturnUrl"];
+        //            if (!string.IsNullOrEmpty(returnUrl))
+        //            {
+        //                viewModel.ReturnUrl = returnUrl;
+        //            }
 
-                    return View(viewModel);
-                }
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //            return View(viewModel);
+        //        }
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
 
-        /// <summary>
-        /// Add a new user
-        /// </summary>
-        /// <param name="userModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Register(MemberAddViewModel userModel)
-        {
-            if (SettingsService.GetSettings().SuspendRegistration != true)
-            {
-                using (UnitOfWorkManager.NewUnitOfWork())
-                {
-                    // First see if there is a spam question and if so, the answer matches
-                    if (!string.IsNullOrEmpty(SettingsService.GetSettings().SpamQuestion))
-                    {
-                        // There is a spam question, if answer is wrong return with error
-                        if (userModel.SpamAnswer == null || userModel.SpamAnswer.Trim() != SettingsService.GetSettings().SpamAnswer)
-                        {
-                            // POTENTIAL SPAMMER!
-                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.WrongAnswerRegistration"));
-                            return View();
-                        }
-                    }
+        ///// <summary>
+        ///// Add a new user
+        ///// </summary>
+        ///// <param name="userModel"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Register(MemberAddViewModel userModel)
+        //{
+        //    if (SettingsService.GetSettings().SuspendRegistration != true)
+        //    {
+        //        using (UnitOfWorkManager.NewUnitOfWork())
+        //        {
+        //            // First see if there is a spam question and if so, the answer matches
+        //            if (!string.IsNullOrEmpty(SettingsService.GetSettings().SpamQuestion))
+        //            {
+        //                // There is a spam question, if answer is wrong return with error
+        //                if (userModel.SpamAnswer == null || userModel.SpamAnswer.Trim() != SettingsService.GetSettings().SpamAnswer)
+        //                {
+        //                    // POTENTIAL SPAMMER!
+        //                    ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.WrongAnswerRegistration"));
+        //                    return View();
+        //                }
+        //            }
 
-                    // Secondly see if the email is banned
-                    if (_bannedEmailService.EmailIsBanned(userModel.Email))
-                    {
-                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.EmailIsBanned"));
-                        return View();
-                    }
-                }
+        //            // Secondly see if the email is banned
+        //            if (_bannedEmailService.EmailIsBanned(userModel.Email))
+        //            {
+        //                ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.EmailIsBanned"));
+        //                return View();
+        //            }
+        //        }
 
-                // Standard Login
-                userModel.LoginType = LoginType.Standard;
+        //        // Standard Login
+        //        userModel.LoginType = LoginType.Standard;
 
-                // Do the register logic
-                return MemberRegisterLogic(userModel);
+        //        // Do the register logic
+        //        return MemberRegisterLogic(userModel);
 
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
+        #endregion
 
         public ActionResult SocialLoginValidator()
         {
@@ -563,57 +565,57 @@ namespace MVCForum.Website.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        /// <summary>
-        /// Email confirmation page from the link in the users email
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public ActionResult EmailConfirmation(Guid id)
-        {
-            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
-            {
-                // Checkconfirmation
-                var user = MembershipService.GetUser(id);
-                if (user != null)
-                {
-                    // Set the user to active
-                    user.IsApproved = true;
+        ///// <summary>
+        ///// Email confirmation page from the link in the users email
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //public ActionResult EmailConfirmation(Guid id)
+        //{
+        //    using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
+        //    {
+        //        // Checkconfirmation
+        //        var user = MembershipService.GetUser(id);
+        //        if (user != null)
+        //        {
+        //            // Set the user to active
+        //            user.IsApproved = true;
 
-                    // Delete Cookie and log them in if this cookie is present
-                    if (Request.Cookies[AppConstants.MemberEmailConfirmationCookieName] != null)
-                    {
-                        var myCookie = new HttpCookie(AppConstants.MemberEmailConfirmationCookieName)
-                        {
-                            Expires = DateTime.UtcNow.AddDays(-1)
-                        };
-                        Response.Cookies.Add(myCookie);
+        //            // Delete Cookie and log them in if this cookie is present
+        //            if (Request.Cookies[AppConstants.MemberEmailConfirmationCookieName] != null)
+        //            {
+        //                var myCookie = new HttpCookie(AppConstants.MemberEmailConfirmationCookieName)
+        //                {
+        //                    Expires = DateTime.UtcNow.AddDays(-1)
+        //                };
+        //                Response.Cookies.Add(myCookie);
 
-                        // Login code
-                        FormsAuthentication.SetAuthCookie(user.UserName, false);
-                    }
+        //                // Login code
+        //                FormsAuthentication.SetAuthCookie(user.UserName, false);
+        //            }
 
-                    // Show a new message
-                    // We use temp data because we are doing a redirect
-                    TempData[AppConstants.MessageViewBagName] = new GenericMessageViewModel
-                    {
-                        Message = LocalizationService.GetResourceString("Members.NowApproved"),
-                        MessageType = GenericMessages.success
-                    };
-                }
+        //            // Show a new message
+        //            // We use temp data because we are doing a redirect
+        //            TempData[AppConstants.MessageViewBagName] = new GenericMessageViewModel
+        //            {
+        //                Message = LocalizationService.GetResourceString("Members.NowApproved"),
+        //                MessageType = GenericMessages.success
+        //            };
+        //        }
 
-                try
-                {
-                    unitOfWork.Commit();
-                }
-                catch (Exception ex)
-                {
-                    unitOfWork.Rollback();
-                    LoggingService.Error(ex);
-                }
-            }
+        //        try
+        //        {
+        //            unitOfWork.Commit();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            unitOfWork.Rollback();
+        //            LoggingService.Error(ex);
+        //        }
+        //    }
 
-            return RedirectToAction("Index", "Home");
-        }
+        //    return RedirectToAction("Index", "Home");
+        //}
 
         /// <summary>
         /// Log on
@@ -703,7 +705,41 @@ namespace MVCForum.Website.Controllers
                                     };
                                     using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
                                     {
-
+                                        #region 從EIP取回相片(先拿掉)
+                                        //// We have an image url - Need to save it to their profile
+                                        //string imageUrl = String.Format("https://eip.promise.com.tw/ptt/images/Empolyee/{0}-001.jpg", empNo);
+                                        //var image = AppHelpers.GetImageFromExternalUrl(imageUrl);
+                                        //// Set upload directory - Create if it doesn't exist
+                                        //var uploadFolderPath = HostingEnvironment.MapPath(string.Concat(SiteConstants.UploadFolderPath, userToSave.Id));
+                                        //if (!Directory.Exists(uploadFolderPath))
+                                        //{
+                                        //    Directory.CreateDirectory(uploadFolderPath);
+                                        //}
+                                        //// Get the file name
+                                        //var fileName = Path.GetFileName(imageUrl);
+                                        //// Create a HttpPostedFileBase image from the C# Image
+                                        //using (var stream = new MemoryStream())
+                                        //{
+                                        //    // Microsoft doesn't give you a file extension - See if it has a file extension
+                                        //    // Get the file extension
+                                        //    var fileExtension = Path.GetExtension(fileName);
+                                        //    if (string.IsNullOrEmpty(fileExtension))
+                                        //    {
+                                        //        // no file extension so give it one
+                                        //        fileName = string.Concat(fileName, ".jpg");
+                                        //    }
+                                        //    image.Save(stream, ImageFormat.Jpeg);
+                                        //    stream.Position = 0;
+                                        //    HttpPostedFileBase formattedImage = new MemoryFile(stream, "image/jpeg", fileName);
+                                        //    // Upload the file
+                                        //    var uploadResult = AppHelpers.UploadFile(formattedImage, uploadFolderPath, LocalizationService, true);
+                                        //    // Don't throw error if problem saving avatar, just don't save it.
+                                        //    if (uploadResult.UploadSuccessful)
+                                        //    {
+                                        //        userToSave.Avatar = uploadResult.UploadedFileName;
+                                        //    }
+                                        //}
+                                        #endregion
                                         var createStatus = MembershipService.CreateUser(userToSave);
                                         isLDAPAuthenticated = createStatus == MembershipCreateStatus.Success;
                                         if (createStatus != MembershipCreateStatus.Success)
@@ -890,6 +926,7 @@ namespace MVCForum.Website.Controllers
             var viewModel = new MemberFrontEndEditViewModel
             {
                 Id = user.Id,
+                EmpNo = user.EmpNo,
                 UserName = user.UserName,
                 Email = user.Email,
                 Signature = user.Signature,
@@ -1012,36 +1049,36 @@ namespace MVCForum.Website.Controllers
                     user.Website = _bannedWordService.SanitiseBannedWords(userModel.Website, bannedWords);
                     user.DisableEmailNotifications = userModel.DisableEmailNotifications;
 
-                    // User is trying to change username, need to check if a user already exists
-                    // with the username they are trying to change to
-                    var changedUsername = false;
-                    var sanitisedUsername = _bannedWordService.SanitiseBannedWords(userModel.UserName, bannedWords);
-                    if (sanitisedUsername != user.UserName)
-                    {
-                        if (MembershipService.GetUser(sanitisedUsername) != null)
-                        {
-                            unitOfWork.Rollback();
-                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateUserName"));
-                            return View(userModel);
-                        }
+                    //// User is trying to change username, need to check if a user already exists
+                    //// with the username they are trying to change to
+                    //var changedUsername = false;
+                    //var sanitisedUsername = _bannedWordService.SanitiseBannedWords(userModel.UserName, bannedWords);
+                    //if (sanitisedUsername != user.UserName)
+                    //{
+                    //    if (MembershipService.GetUser(sanitisedUsername) != null)
+                    //    {
+                    //        unitOfWork.Rollback();
+                    //        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateUserName"));
+                    //        return View(userModel);
+                    //    }
 
-                        user.UserName = sanitisedUsername;
-                        changedUsername = true;
-                    }
+                    //    user.UserName = sanitisedUsername;
+                    //    changedUsername = true;
+                    //}
 
-                    // User is trying to update their email address, need to 
-                    // check the email is not already in use
-                    if (userModel.Email != user.Email)
-                    {
-                        // Add get by email address
-                        if (MembershipService.GetUserByEmail(userModel.Email) != null)
-                        {
-                            unitOfWork.Rollback();
-                            ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateEmail"));
-                            return View(userModel);
-                        }
-                        user.Email = userModel.Email;
-                    }
+                    //// User is trying to update their email address, need to 
+                    //// check the email is not already in use
+                    //if (userModel.Email != user.Email)
+                    //{
+                    //    // Add get by email address
+                    //    if (MembershipService.GetUserByEmail(userModel.Email) != null)
+                    //    {
+                    //        unitOfWork.Rollback();
+                    //        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Members.Errors.DuplicateEmail"));
+                    //        return View(userModel);
+                    //    }
+                    //    user.Email = userModel.Email;
+                    //}
 
                     MembershipService.ProfileUpdated(user);
 
@@ -1055,37 +1092,37 @@ namespace MVCForum.Website.Controllers
                     {
                         unitOfWork.Commit();
 
-                        if (changedUsername)
-                        {
-                            // User has changed their username so need to log them in
-                            // as there new username of 
-                            var authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-                            if (authCookie != null)
-                            {
-                                var authTicket = FormsAuthentication.Decrypt(authCookie.Value);
-                                if (authTicket != null)
-                                {
-                                    var newFormsIdentity = new FormsIdentity(new FormsAuthenticationTicket(authTicket.Version,
-                                                                                                           user.UserName,
-                                                                                                           authTicket.IssueDate,
-                                                                                                           authTicket.Expiration,
-                                                                                                           authTicket.IsPersistent,
-                                                                                                           authTicket.UserData));
-                                    var roles = authTicket.UserData.Split("|".ToCharArray());
-                                    var newGenericPrincipal = new GenericPrincipal(newFormsIdentity, roles);
-                                    System.Web.HttpContext.Current.User = newGenericPrincipal;
-                                }
-                            }
+                        //if (changedUsername)
+                        //{
+                        //    // User has changed their username so need to log them in
+                        //    // as there new username of 
+                        //    var authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+                        //    if (authCookie != null)
+                        //    {
+                        //        var authTicket = FormsAuthentication.Decrypt(authCookie.Value);
+                        //        if (authTicket != null)
+                        //        {
+                        //            var newFormsIdentity = new FormsIdentity(new FormsAuthenticationTicket(authTicket.Version,
+                        //                                                                                   user.UserName,
+                        //                                                                                   authTicket.IssueDate,
+                        //                                                                                   authTicket.Expiration,
+                        //                                                                                   authTicket.IsPersistent,
+                        //                                                                                   authTicket.UserData));
+                        //            var roles = authTicket.UserData.Split("|".ToCharArray());
+                        //            var newGenericPrincipal = new GenericPrincipal(newFormsIdentity, roles);
+                        //            System.Web.HttpContext.Current.User = newGenericPrincipal;
+                        //        }
+                        //    }
 
-                            // sign out current user
-                            FormsAuthentication.SignOut();
+                        //    // sign out current user
+                        //    FormsAuthentication.SignOut();
 
-                            // Abandon the session
-                            Session.Abandon();
+                        //    // Abandon the session
+                        //    Session.Abandon();
 
-                            // Sign in new user
-                            FormsAuthentication.SetAuthCookie(user.UserName, false);
-                        }
+                        //    // Sign in new user
+                        //    FormsAuthentication.SetAuthCookie(user.UserName, false);
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -1248,7 +1285,14 @@ namespace MVCForum.Website.Controllers
         [Authorize]
         public ActionResult ChangePassword()
         {
-            return View();
+            if (LoggedOnReadOnlyUser.EmpNo == "0")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -1256,6 +1300,10 @@ namespace MVCForum.Website.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(ChangePasswordViewModel model)
         {
+            if (LoggedOnReadOnlyUser.EmpNo != "0")
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var changePasswordSucceeded = true;
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
             {

@@ -326,6 +326,7 @@ namespace MVCForum.Data.Migrations
                     var admin = new MembershipUser
                     {
                         Email = "you@email.com",
+                        EmpNo = "0",
                         UserName = adminUsername,
                         Password = "password",
                         IsApproved = true,

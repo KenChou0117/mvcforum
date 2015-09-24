@@ -26,6 +26,33 @@
     @RenderSection("SocialMeta", false)
     @ViewBag.Canonical
     @Html.Partial("_StyleSheets", theme)
+    <style>
+        .ribbon {
+          position: absolute;
+          left: 0px; top: 0px;
+          z-index: 1;
+          overflow: hidden;
+          width: 100px; height: 100px;
+          text-align: right;
+        }
+        .ribbon span {
+          font-size: 18px;
+          font-weight: bold;
+          color: #FFF;
+          text-transform: uppercase;
+          text-align: center;
+          line-height: 25px;
+          transform: rotate(-45deg);
+          -webkit-transform: rotate(-45deg);
+          width: 170px;
+          display: block;
+          background: #FF8214;
+          background: linear-gradient(#F7C90F 0%, #FF8214 100%);
+          box shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+          position: absolute;
+          top: 20px; left: -50px;
+        }
+    </style>
     <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -49,10 +76,10 @@
             }
             else
             {
-                if (Html.Settings().SuspendRegistration != true)
+                @*if (Html.Settings().SuspendRegistration != true)
                 {
                     <li><a href="@Url.Action("Register", "Members")">@Html.LanguageString("Layout.Nav.Register")</a></li>
-                }
+                }*@
                 <li><a href="@Url.Action("LogOn", "Members")">@Html.LanguageString("Layout.Nav.Logon")</a></li>
             }
             <li><a href="@Url.Action("Index", "Category")">@Html.LanguageString("Category.AllCategories")</a></li>
@@ -82,10 +109,10 @@
                     <ul class="nav navbar-nav navbar-right">
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            if (Html.Settings().SuspendRegistration != true)
+                            @*if (Html.Settings().SuspendRegistration != true)
                             {
                                 <li><a href="@Url.Action("Register", "Members")">@Html.LanguageString("Layout.Nav.Register")</a></li>
-                            }
+                            }*@
                             <li><a href="@Url.Action("LogOn", "Members")">@Html.LanguageString("Layout.Nav.Logon")</a></li>
                         }                        
                         @if (User.Identity.IsAuthenticated)
@@ -158,6 +185,7 @@
     @if (!string.IsNullOrEmpty(Html.Settings().CustomFooterCode))
     {
         @Html.Raw(Html.Settings().CustomFooterCode)
-    }    
+    }
+    <div class="ribbon hidden-xs"><span>Beta</span></div>
 </body>
 </html>
