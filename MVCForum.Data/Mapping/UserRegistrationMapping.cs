@@ -18,7 +18,7 @@ namespace MVCForum.Data.Mapping
             this.Property(x => x.pWord).IsRequired();
             this.Property(x => x.FirstName);
             this.Property(x => x.LastName);
-            this.Property(x => x.IsActivate);
+            //this.Property(x => x.IsActivate);
 
             //Mapping Database Column
             this.Property(x => x.CustomerID).HasColumnName("customerId");
@@ -26,8 +26,8 @@ namespace MVCForum.Data.Mapping
             this.Property(x => x.pWord).HasColumnName("pWord");
             this.Property(x => x.FirstName).HasColumnName("FirstName");
             this.Property(x => x.LastName).HasColumnName("LastName");
-            this.Property(x => x.IsActivate).HasColumnName("active");
-            
+            //this.Property(x => x.IsActivate).HasColumnName("active");
+
         }
     }
 }

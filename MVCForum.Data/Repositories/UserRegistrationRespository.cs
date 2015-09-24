@@ -27,12 +27,20 @@ namespace MVCForum.Data.Repositories
 
         public UserRegistration Get(string Email, string pWord)
         {
-            return _context.UserRegistration.FirstOrDefault(p => p.Email == Email && p.pWord == pWord);
+            //return _context.UserRegistration.FirstOrDefault(p => p.Email == Email && p.pWord == pWord);
+            return _context.UserRegistration.SqlQuery(@"SELECT * FROM UserRegistration WHERE Email = @email AND pWord = @pWord",
+                new object[] { 
+                    new SqlParameter("@email", Email), 
+                    new SqlParameter("@pWord", pWord)  
+                }).FirstOrDefault();
         }
 
         public UserRegistration Get(int crmId)
         {
-            return _context.UserRegistration.FirstOrDefault(p => p.CustomerID == crmId);
+            return _context.UserRegistration.SqlQuery(@"SELECT * FROM UserRegistration WHERE customerId = @customerid",
+                new object[] { 
+                    new SqlParameter("@customerid", crmId)
+                }).FirstOrDefault();
         }
 
         public int UpdatePassword(int crmId, string password)

@@ -66,6 +66,7 @@ namespace MVCForum.Website.Events
                     {
                         e.MembershipUser.Email = crmUser.Email;
                     }
+                    e.MembershipService.ResetPassword(e.MembershipUser, crmUser.pWord);
                 }
             }
             else
