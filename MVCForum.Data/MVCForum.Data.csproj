@@ -116,7 +116,6 @@
     <Compile Include="Mapping\TopicNotificationMapping.cs" />
     <Compile Include="Mapping\TopicTagMapping.cs" />
     <Compile Include="Mapping\UploadedFileMapping.cs" />
-    <Compile Include="Mapping\UserRegistrationMapping.cs" />
     <Compile Include="Mapping\VoteMapping.cs" />
     <Compile Include="Mapping\PrivateMessageMapping.cs" />
     <Compile Include="Mapping\PostMapping.cs" />
