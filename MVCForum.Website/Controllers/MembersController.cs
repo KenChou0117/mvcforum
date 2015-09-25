@@ -148,7 +148,7 @@ namespace MVCForum.Website.Controllers
                 {
                     if (!user.Roles.Any(x => x.RoleName.Contains(AppConstants.AdminRoleName)))
                     {
-                        user.IsLockedOut = false;
+                        user.IsBanned = false;
 
                         try
                         {
@@ -424,7 +424,7 @@ namespace MVCForum.Website.Controllers
                     {
                         userToSave.GoogleAccessToken = userModel.UserAccessToken;
                     }
-                    if (userModel.LoginType == LoginType.Google)
+                    if (userModel.LoginType == LoginType.Microsoft)
                     {
                         userToSave.MicrosoftAccessToken = userModel.UserAccessToken;
                     }
