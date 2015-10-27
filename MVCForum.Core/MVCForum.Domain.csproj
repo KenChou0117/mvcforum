@@ -107,6 +107,7 @@
     <Compile Include="DomainModel\Entities\Poll.cs" />
     <Compile Include="DomainModel\Entities\PrivateMessage.cs" />
     <Compile Include="DomainModel\General\MarkAsSolutionReminder.cs" />
+    <Compile Include="DomainModel\General\MemberAuthData.cs" />
     <Compile Include="DomainModel\General\Report.cs" />
     <Compile Include="DomainModel\General\SitemapEntry.cs" />
     <Compile Include="DomainModel\Entities\TagNotification.cs" />

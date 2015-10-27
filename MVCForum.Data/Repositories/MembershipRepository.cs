@@ -36,14 +36,33 @@ namespace MVCForum.Data.Repositories
                 return _context.MembershipUser
                     .Include(x => x.Roles)
                     .AsNoTracking()
-                    .FirstOrDefault(name => name.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));                
+                    .FirstOrDefault(name => name.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));
             }
             return _context.MembershipUser
                 .Include(x => x.Roles)
                 .FirstOrDefault(name => name.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));
-                //.FirstOrDefault(name => String.Equals(name.UserName, username, StringComparison.CurrentCultureIgnoreCase));
+            //.FirstOrDefault(name => String.Equals(name.UserName, username, StringComparison.CurrentCultureIgnoreCase));
         }
 
+        /// <summary>
+        /// Get a user by id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="removeTracking"></param>
+        /// <returns></returns>
+        public MembershipUser GetUserById(Guid? userId, bool removeTracking = false)
+        {
+            if (removeTracking)
+            {
+                return _context.MembershipUser
+                    .Include(x => x.Roles)
+                    .AsNoTracking()
+                    .FirstOrDefault(name => name.Id == userId);
+            }
+            return _context.MembershipUser
+                .Include(x => x.Roles)
+                .FirstOrDefault(name => name.Id == userId);
+        }
         /// <summary>
         /// Returns a user by their facebook id
         /// </summary>
@@ -103,7 +122,7 @@ namespace MVCForum.Data.Repositories
             return _context.MembershipUser
                 .Where(x =>
                         x.Posts.Count <= amoutOfPosts &&
-                        x.CreateDate > registerStart && 
+                        x.CreateDate > registerStart &&
                         x.CreateDate <= registerEnd)
                 .ToList();
         }
@@ -194,7 +213,7 @@ namespace MVCForum.Data.Repositories
 
             var results = query
                 .OrderBy(x => x.UserName)
-                .Skip((pageIndex - 1)*pageSize)
+                .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 

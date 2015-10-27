@@ -23,6 +23,7 @@ namespace MVCForum.Domain.Interfaces.Services
         LoginAttemptStatus LastLoginStatus { get; }
         string[] GetRolesForUser(string username);
         MembershipUser GetUser(string username, bool removeTracking = false);
+        MembershipUser GetUserById(Guid? UserId, bool removeTracking = false);
         MembershipUser GetUserByEmail(string email);
         MembershipUser GetUserBySlug(string slug);
         MembershipUser GetUserByFacebookId(long facebookId);
@@ -61,5 +62,6 @@ namespace MVCForum.Domain.Interfaces.Services
         bool UpdatePasswordResetToken(MembershipUser user);
         bool ClearPasswordResetToken(MembershipUser user);
         bool IsPasswordResetTokenValid(MembershipUser user, string token);
+
     }
 }

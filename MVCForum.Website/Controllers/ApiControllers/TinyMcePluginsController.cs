@@ -50,7 +50,7 @@ namespace MVCForum.Website.Controllers.ApiControllers
                         if (httpPostedFile != null)
                         {
                             HttpPostedFileBase photo = new HttpPostedFileWrapper(httpPostedFile);
-                            var loggedOnReadOnlyUser = memberService.GetUser(HttpContext.Current.User.Identity.Name);
+                            var loggedOnReadOnlyUser = memberService.GetUserById(Guid.Parse(HttpContext.Current.User.Identity.Name));
                             var permissions = roleService.GetPermissions(null, loggedOnReadOnlyUser.Roles.FirstOrDefault());
                             // Get the permissions for this category, and check they are allowed to update
                             if (permissions[AppConstants.PermissionInsertEditorImages].IsTicked && loggedOnReadOnlyUser.DisableFileUploads != true)

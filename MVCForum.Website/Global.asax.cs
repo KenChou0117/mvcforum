@@ -62,7 +62,7 @@ namespace MVCForum.Website
 
             // Start unity
             var unityContainer = UnityHelper.Start();
-            
+
             // Run scheduled tasks
             ScheduledRunner.Run(unityContainer);
 
@@ -96,6 +96,22 @@ namespace MVCForum.Website
 
             // Initialise the events
             EventManager.Instance.Initialize(LoggingService, loadedAssemblies);
+        }
+
+        protected void Application_AuthenticateRequest(object sender, EventArgs e)
+        {
+            if (User != null)
+            {
+
+            }
+        }
+
+        protected void Application_AuthorizeRequest(Object sender, EventArgs e)
+        {
+            if (User != null)
+            {
+
+            }
         }
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)

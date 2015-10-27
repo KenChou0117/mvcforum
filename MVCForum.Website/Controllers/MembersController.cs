@@ -205,7 +205,7 @@ namespace MVCForum.Website.Controllers
                     using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
                     {
                         // Actually get the user, LoggedOnUser has no tracking
-                        var loggedOnUser = MembershipService.GetUser(Username);
+                        var loggedOnUser = MembershipService.GetUserById(UserId);
 
                         // Update users last activity date so we can show the latest users online
                         loggedOnUser.LastActivityDate = DateTime.UtcNow;
@@ -334,7 +334,7 @@ namespace MVCForum.Website.Controllers
                 return MemberRegisterLogic(userModel);
             }
 
-            
+
 
             ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Errors.GenericMessage"));
             return View("Register");
@@ -661,7 +661,7 @@ namespace MVCForum.Website.Controllers
                             UserName = model.UserName,
                             Password = model.Password,
                             RememberMe = model.RememberMe,
-                            ReturnUrl = model.ReturnUrl, 
+                            ReturnUrl = model.ReturnUrl,
                             UnitOfWork = unitOfWork
                         };
                         EventManager.Instance.FireBeforeLogin(this, e);
@@ -1060,7 +1060,7 @@ namespace MVCForum.Website.Controllers
                 CanViewPrivateMessages = canViewPms,
                 IsDropDown = isDropDown
             };
-            
+
             return PartialView(viewModel);
         }
 
@@ -1119,11 +1119,11 @@ namespace MVCForum.Website.Controllers
                 {
                     var user = MembershipService.GetUser(viewModel.Id);
                     var report = new Report
-                                     {
-                                         Reason = viewModel.Reason,
-                                         ReportedMember = user,
-                                         Reporter = LoggedOnReadOnlyUser
-                                     };
+                    {
+                        Reason = viewModel.Reason,
+                        ReportedMember = user,
+                        Reporter = LoggedOnReadOnlyUser
+                    };
                     _reportService.MemberReport(report);
 
                     try
@@ -1157,12 +1157,12 @@ namespace MVCForum.Website.Controllers
 
                 // Redisplay list of users
                 var allViewModelUsers = allUsers.Select(user => new PublicSingleMemberListViewModel
-                                                                    {
-                                                                        UserName = user.UserName,
-                                                                        NiceUrl = user.NiceUrl,
-                                                                        CreateDate = user.CreateDate,
-                                                                        TotalPoints = user.TotalPoints,
-                                                                    }).ToList();
+                {
+                    UserName = user.UserName,
+                    NiceUrl = user.NiceUrl,
+                    CreateDate = user.CreateDate,
+                    TotalPoints = user.TotalPoints,
+                }).ToList();
 
                 var memberListModel = new PublicMemberListViewModel
                 {

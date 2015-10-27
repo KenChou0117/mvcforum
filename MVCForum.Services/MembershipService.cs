@@ -73,7 +73,7 @@ namespace MVCForum.Services
             ITopicNotificationService topicNotificationService, IVoteService voteService, IBadgeService badgeService,
             ICategoryNotificationService categoryNotificationService, ILoggingService loggingService, IUploadedFileService uploadedFileService,
             IPostRepository postRepository, IPollVoteRepository pollVoteRepository, IPollAnswerRepository pollAnswerRepository,
-            IPollRepository pollRepository, ITopicRepository topicRepository, IFavouriteRepository favouriteRepository, 
+            IPollRepository pollRepository, ITopicRepository topicRepository, IFavouriteRepository favouriteRepository,
             ICategoryService categoryService)
         {
             _membershipRepository = membershipRepository;
@@ -187,7 +187,7 @@ namespace MVCForum.Services
             if (user.IsBanned)
             {
                 _lastLoginStatus = LoginAttemptStatus.Banned;
-                return false;                
+                return false;
             }
 
             if (user.IsLockedOut)
@@ -239,21 +239,21 @@ namespace MVCForum.Services
             var now = DateTime.UtcNow;
 
             return new MembershipUser
-                       {
-                           UserName = string.Empty,
-                           Password = string.Empty,
-                           Email = string.Empty,
-                           PasswordQuestion = string.Empty,
-                           PasswordAnswer = string.Empty,
-                           CreateDate = now,
-                           FailedPasswordAnswerAttempt = 0,
-                           FailedPasswordAttemptCount = 0,
-                           LastLockoutDate = (DateTime)SqlDateTime.MinValue,
-                           LastPasswordChangedDate = now,
-                           IsApproved = false,
-                           IsLockedOut = false,
-                           LastLoginDate = (DateTime)SqlDateTime.MinValue,
-                       };
+            {
+                UserName = string.Empty,
+                Password = string.Empty,
+                Email = string.Empty,
+                PasswordQuestion = string.Empty,
+                PasswordAnswer = string.Empty,
+                CreateDate = now,
+                FailedPasswordAnswerAttempt = 0,
+                FailedPasswordAttemptCount = 0,
+                LastLockoutDate = (DateTime)SqlDateTime.MinValue,
+                LastPasswordChangedDate = now,
+                IsApproved = false,
+                IsLockedOut = false,
+                LastLoginDate = (DateTime)SqlDateTime.MinValue,
+            };
         }
 
         /// <summary>
@@ -330,11 +330,11 @@ namespace MVCForum.Services
                             sb.AppendFormat("<p>{0}</p>", string.Format(_localizationService.GetResourceString("Members.NewMemberRegistered"), settings.ForumName, settings.ForumUrl));
                             sb.AppendFormat("<p>{0} - {1}</p>", newUser.UserName, newUser.Email);
                             var email = new Email
-                                            {
-                                                EmailTo = settings.AdminEmailAddress,
-                                                NameTo = _localizationService.GetResourceString("Members.Admin"),
-                                                Subject = _localizationService.GetResourceString("Members.NewMemberSubject")
-                                            };
+                            {
+                                EmailTo = settings.AdminEmailAddress,
+                                NameTo = _localizationService.GetResourceString("Members.Admin"),
+                                Subject = _localizationService.GetResourceString("Members.NewMemberSubject")
+                            };
                             email.Body = _emailService.EmailTemplate(email.NameTo, sb.ToString());
                             _emailService.SendMail(email);
                         }
@@ -362,16 +362,24 @@ namespace MVCForum.Services
         public MembershipUser GetUser(string username, bool removeTracking = false)
         {
             var member = _membershipRepository.GetUser(username, removeTracking);
-
-            // Do a check to log out the user if they are logged in and have been deleted
-            if (member == null && HttpContext.Current.User.Identity.Name == username)
-            {
-                // Member is null so doesn't exist, yet they are logged in with that username - Log them out
-                FormsAuthentication.SignOut();
-            }
-
+            //if (member == null && HttpContext.Current.User.Identity.Name == username)
+            //{
+            //    FormsAuthentication.SignOut();
+            //}
             return member;
         }
+
+        public MembershipUser GetUserById(Guid? userId, bool removeTracking = false)
+        {
+            var member = _membershipRepository.GetUserById(userId, removeTracking);
+            //if (member == null && Guid.Parse(HttpContext.Current.User.Identity.Name) == userId)
+            //{
+            //    FormsAuthentication.SignOut();
+            //}
+            return member;
+        }
+
+
 
         /// <summary>
         /// Get a user by email address
@@ -1064,7 +1072,7 @@ namespace MVCForum.Services
             var existingUser = GetUser(user.Id);
             if (existingUser == null)
             {
-                return false;   
+                return false;
             }
             existingUser.PasswordResetToken = CreatePasswordResetToken();
             existingUser.PasswordResetTokenCreatedAt = DateTime.UtcNow;
@@ -1079,7 +1087,7 @@ namespace MVCForum.Services
             var existingUser = GetUser(user.Id);
             if (existingUser == null)
             {
-                return false;   
+                return false;
             }
             existingUser.PasswordResetToken = null;
             existingUser.PasswordResetTokenCreatedAt = null;
@@ -1102,12 +1110,12 @@ namespace MVCForum.Services
             // A security token must have an expiry date
             if (existingUser.PasswordResetTokenCreatedAt == null)
             {
-                return false;   
+                return false;
             }
             // The security token is only valid for 48 hours
             if ((DateTime.UtcNow - existingUser.PasswordResetTokenCreatedAt.Value).TotalHours >= MaxHoursToResetPassword)
             {
-                return false;   
+                return false;
             }
             return existingUser.PasswordResetToken == token;
         }

@@ -48,7 +48,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             IMembershipService membershipService,
             ILocalizationService localizationService,
             IRoleService roleService,
-            ISettingsService settingsService, IPostService postService, ITopicService topicService, IMembershipUserPointsService membershipUserPointsService, 
+            ISettingsService settingsService, IPostService postService, ITopicService topicService, IMembershipUserPointsService membershipUserPointsService,
             IActivityService activityService, IPollService pollService, IPollVoteService pollVoteService, IPollAnswerService pollAnswerService, IUploadedFileService uploadedFileService)
             : base(loggingService, unitOfWorkManager, membershipService, localizationService, settingsService)
         {
@@ -101,7 +101,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
 
             // Replace the roles in the user's collection
             user.Roles.Clear();
-            foreach(var role in updatedRolesSet)
+            foreach (var role in updatedRolesSet)
             {
                 user.Roles.Add(role);
             }
@@ -127,7 +127,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
                 {
                     Users = allViewModelUsers,
                     AllRoles = _roleService.AllRoles(),
-                    Id = MembershipService.GetUser(User.Identity.Name).Id,
+                    Id = MembershipService.GetUserById(Guid.Parse(User.Identity.Name)).Id,
                     PageIndex = pageIndex,
                     TotalCount = allUsers.TotalCount,
                     Search = search,
@@ -246,7 +246,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
                         MessageType = GenericMessages.danger
                     };
                 }
-                return RedirectToAction("Manage", new {p, search});
+                return RedirectToAction("Manage", new { p, search });
             }
         }
 
@@ -285,9 +285,9 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             using (UnitOfWorkManager.NewUnitOfWork())
             {
                 var roles = new RoleListViewModel
-                        {
-                            MembershipRoles = _roleService.AllRoles()
-                        };
+                {
+                    MembershipRoles = _roleService.AllRoles()
+                };
                 return View(roles);
             }
         }
@@ -313,7 +313,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             {
                 var existingRole = _roleService.GetRole(role.Id);
                 existingRole.RoleName = role.RoleName;
-               
+
                 try
                 {
                     unitOfWork.Commit();

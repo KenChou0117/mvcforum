@@ -8,6 +8,10 @@ using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Areas.Admin.ViewModels;
 using MembershipUser = MVCForum.Domain.DomainModel.MembershipUser;
+using System;
+using Newtonsoft.Json;
+using MVCForum.Domain.DomainModel.General;
+using MVCForum.Utilities;
 
 namespace MVCForum.Website.Controllers
 {
@@ -44,10 +48,49 @@ namespace MVCForum.Website.Controllers
             SettingsService = settingsService;
             LoggingService = loggingService;
 
-            using (UnitOfWorkManager.NewUnitOfWork())
+            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
             {
-                LoggedOnReadOnlyUser = UserIsAuthenticated ? MembershipService.GetUser(Username, true) : null;
-                UsersRole = LoggedOnReadOnlyUser == null ? RoleService.GetRole(AppConstants.GuestRoleName, true) : LoggedOnReadOnlyUser.Roles.FirstOrDefault();   
+                LoggedOnReadOnlyUser = UserIsAuthenticated ? MembershipService.GetUserById(UserId, true) : null;
+                if (LoggedOnReadOnlyUser == null && UserIsAuthenticated)
+                { 
+                    //在SSO登入者，若沒有Forum的帳號，幫他建立一個帳號
+                    //從FormsAuthenticationTicket取得user資料
+                    FormsIdentity id = (FormsIdentity)LoginUser.Identity;
+                    FormsAuthenticationTicket ticket = id.Ticket;
+                    var userData = JsonConvert.DeserializeObject<MemberAuthData>(ticket.UserData);
+                    string userName = String.Format("{0}_{1}", userData.FirstName, userData.LastName);
+                    string autoUserName = userName;
+                    int index = 1;
+                    var existsUser = MembershipService.GetUser(userName, true);
+                    while (existsUser != null)
+                    {
+                        autoUserName = String.Format("{0}_{1}", userName, index.ToString());
+                        existsUser = MembershipService.GetUser(autoUserName, true);
+                        index++;
+                    }
+                    var userToSave = new MVCForum.Domain.DomainModel.MembershipUser
+                    {
+                        Id = userData.Id,
+                        UserName = autoUserName,
+                        Email = userData.Email,
+                        Password = StringUtils.RandomString(8),
+                        IsApproved = true,
+                        Comment = String.Empty,
+                    };
+                    var createStatus = MembershipService.CreateUser(userToSave);
+                    try
+                    {
+                        unitOfWork.SaveChanges();
+                        unitOfWork.Commit();
+                        LoggedOnReadOnlyUser = userToSave;
+                    }
+                    catch (Exception ex)
+                    {
+                        unitOfWork.Rollback();
+                        LoggingService.Error(ex);
+                    }
+                }
+                UsersRole = LoggedOnReadOnlyUser == null ? RoleService.GetRole(AppConstants.GuestRoleName, true) : LoggedOnReadOnlyUser.Roles.FirstOrDefault();
             }
         }
 
@@ -66,7 +109,7 @@ namespace MVCForum.Website.Controllers
                 if (controller.ToString().ToLower() != "closed" && controller.ToString().ToLower() != "members" && !area.ToString().ToLower().Contains("admin"))
                 {
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Closed" }, { "action", "Index" } });
-                }          
+                }
             }
 
             // If the user is banned - Log them out.
@@ -90,6 +133,13 @@ namespace MVCForum.Website.Controllers
             }
         }
 
+        protected System.Security.Principal.IPrincipal LoginUser
+        {
+            get {
+                return System.Web.HttpContext.Current.User;
+            }
+        }
+
         protected bool UserIsAdmin
         {
             get { return User.IsInRole(AppConstants.AdminRoleName); }
@@ -100,11 +150,11 @@ namespace MVCForum.Website.Controllers
             //ViewData[AppConstants.MessageViewBagName] = messageViewModel;
             TempData[AppConstants.MessageViewBagName] = messageViewModel;
         }
-        protected string Username
+        protected Guid? UserId
         {
             get
             {
-                return UserIsAuthenticated ? System.Web.HttpContext.Current.User.Identity.Name : null;
+                return UserIsAuthenticated ? Guid.Parse(System.Web.HttpContext.Current.User.Identity.Name) : (Guid?)null;
             }
         }
 

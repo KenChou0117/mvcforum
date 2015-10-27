@@ -4,6 +4,7 @@ using MVCForum.Domain.DomainModel;
 using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Areas.Admin.ViewModels;
+using System;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
@@ -37,7 +38,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             SettingsService = settingsService;
             LoggingService = loggingService;
 
-            LoggedOnReadOnlyUser = MembershipService.GetUser(System.Web.HttpContext.Current.User.Identity.Name, true);
+            LoggedOnReadOnlyUser = MembershipService.GetUserById(Guid.Parse(System.Web.HttpContext.Current.User.Identity.Name), true);
         }
 
         protected void ShowMessage(GenericMessageViewModel messageViewModel)
