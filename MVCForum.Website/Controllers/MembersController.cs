@@ -33,8 +33,10 @@ namespace MVCForum.Website.Controllers
         private readonly IVoteService _voteService;
         private readonly ICategoryService _categoryService;
 
-        public MembersController(ILoggingService loggingService, IUnitOfWorkManager unitOfWorkManager, IMembershipService membershipService, ILocalizationService localizationService,
-            IRoleService roleService, ISettingsService settingsService, IPostService postService, IReportService reportService, IEmailService emailService, IPrivateMessageService privateMessageService, IBannedWordService bannedWordService, ITopicNotificationService topicNotificationService, IPollAnswerService pollAnswerService, IVoteService voteService, ICategoryService categoryService)
+        public MembersController(ILoggingService loggingService, IUnitOfWorkManager unitOfWorkManager, IMembershipService membershipService, 
+            ILocalizationService localizationService, IRoleService roleService, ISettingsService settingsService, IPostService postService, 
+            IReportService reportService, IEmailService emailService, IPrivateMessageService privateMessageService, IBannedWordService bannedWordService, 
+            ITopicNotificationService topicNotificationService, IPollAnswerService pollAnswerService, IVoteService voteService, ICategoryService categoryService)
             : base(loggingService, unitOfWorkManager, membershipService, localizationService, roleService, settingsService)
         {
             _postService = postService;
@@ -267,7 +269,7 @@ namespace MVCForum.Website.Controllers
             if (HttpContext.Request != null)
             {
                 String referrerUrl = HttpContext.Request.UrlReferrer == null ? String.Empty : HttpContext.Request.UrlReferrer.AbsoluteUri;
-                loginUrl += "?ReturnUrl=" +  AntiXssEncoder.UrlEncode(String.IsNullOrEmpty(referrerUrl) ? defaultUrl : referrerUrl);
+                loginUrl += "?ReturnUrl=" + AntiXssEncoder.UrlEncode(String.IsNullOrEmpty(referrerUrl) ? defaultUrl : referrerUrl) + "&source=" + AntiXssEncoder.UrlEncode(SettingsService.GetSettings().ForumName);
             }
             Response.Redirect(loginUrl);
             return null;

@@ -297,7 +297,6 @@
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\FavouriteController.cs" />
     <Compile Include="Controllers\FileController.cs" />
-    <Compile Include="Controllers\InstallController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\PrivateMessageController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
@@ -776,23 +775,6 @@
     <Content Include="Content\spectrum\spectrum.js" />
     <Content Include="Content\tinymce.css" />
     <Content Include="Content\uploads\readme.txt" />
-    <Content Include="Installer\Content\arrow-spinner-blue.gif" />
-    <Content Include="Installer\Content\Images\logo.png" />
-    <Content Include="Installer\Content\Scripts\general.js" />
-    <Content Include="Installer\Content\Styles\install.css" />
-    <Content Include="Installer\Db\1.0\database.sql" />
-    <Content Include="Installer\Db\1.1\database.sql" />
-    <Content Include="Installer\Db\1.2\database.sql" />
-    <Content Include="Installer\Db\1.2\Upgrade\upgrade.sql" />
-    <Content Include="Installer\Db\1.3\database.sql" />
-    <Content Include="Installer\Db\1.7\database.sql" />
-    <Content Include="Installer\Db\1.7\Upgrade\upgrade.sql" />
-    <Content Include="Installer\Db\1.6\database.sql" />
-    <Content Include="Installer\Db\1.6\Upgrade\upgrade.sql" />
-    <Content Include="Installer\Db\1.5\database.sql" />
-    <Content Include="Installer\Db\1.5\Upgrade\upgrade.sql" />
-    <Content Include="Installer\Db\1.4\database.sql" />
-    <Content Include="Installer\Db\1.4\Upgrade\upgrade.sql" />
     <Content Include="Scripts\bbeditor\emoticons\alien.png" />
     <Content Include="Scripts\bbeditor\emoticons\angel.png" />
     <Content Include="Scripts\bbeditor\emoticons\angry.png" />
@@ -1100,7 +1082,6 @@
     <Content Include="Areas\Admin\Views\Settings\TestEmail.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_GetCurrentVersion.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\TodaysTopics.cshtml" />
-    <Content Include="Installer\en-GB.csv" />
     <Content Include="Areas\Admin\Views\Batch\BatchMoveTopics.cshtml" />
     <Content Include="Areas\Admin\Views\BannedWord\Index.cshtml" />
     <Content Include="Scripts\jquery.placeholder.min.js" />
@@ -1160,8 +1141,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Install\ManualUpgradeNeeded.cshtml" />
-    <Content Include="Views\Install\UpgradeDb.cshtml" />
     <Content Include="Views\Snippets\GetThisWeeksTopEarners.cshtml" />
     <Content Include="Views\Snippets\GetThisYearsTopEarners.cshtml" />
     <Content Include="Views\Stats\GetMainStats.cshtml" />
@@ -1467,9 +1446,6 @@
     <Content Include="Themes\Metro\Content\Fonts\mvcforumsb.ttf" />
     <Content Include="Themes\Metro\Content\Fonts\mvcforumsb.woff" />
     <Content Include="Views\Shared\customeditors\markdowneditor.cshtml" />
-    <Content Include="Views\Install\Index.cshtml" />
-    <Content Include="Views\Install\CreateDb.cshtml" />
-    <Content Include="Views\Install\Complete.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
