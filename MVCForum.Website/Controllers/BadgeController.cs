@@ -48,7 +48,7 @@ namespace MVCForum.Website.Controllers
             {
                 try
                 {
-                    var loggedOnUser = MembershipService.GetUser(LoggedOnReadOnlyUser.UserName);
+                    var loggedOnUser = MembershipService.GetUserById(LoggedOnReadOnlyUser.Id);
                     var databaseUpdateNeededOne = _badgeService.ProcessBadge(BadgeType.VoteUp, loggedOnUser);
                     if (databaseUpdateNeededOne)
                     {
@@ -83,7 +83,7 @@ namespace MVCForum.Website.Controllers
             {
                 try
                 {
-                    var loggedOnUser = MembershipService.GetUser(LoggedOnReadOnlyUser.UserName);
+                    var loggedOnUser = MembershipService.GetUserById(LoggedOnReadOnlyUser.Id);
                     var databaseUpdateNeededOne = _badgeService.ProcessBadge(BadgeType.VoteDown, loggedOnUser);
                     if (databaseUpdateNeededOne)
                     {
@@ -121,7 +121,7 @@ namespace MVCForum.Website.Controllers
                 {
                     try
                     {
-                        var loggedOnUser = MembershipService.GetUser(LoggedOnReadOnlyUser.UserName);
+                        var loggedOnUser = MembershipService.GetUserById(LoggedOnReadOnlyUser.Id);
                         var databaseUpdateNeeded = _badgeService.ProcessBadge(BadgeType.Post, loggedOnUser);
 
                         if (databaseUpdateNeeded)
@@ -196,7 +196,7 @@ namespace MVCForum.Website.Controllers
                 {
                     if (LoggedOnReadOnlyUser != null)
                     {
-                        var loggedOnUser = MembershipService.GetUser(LoggedOnReadOnlyUser.UserName);
+                        var loggedOnUser = MembershipService.GetUserById(LoggedOnReadOnlyUser.Id);
                         var databaseUpdateNeeded = _badgeService.ProcessBadge(BadgeType.Profile, loggedOnUser);
 
                         if (databaseUpdateNeeded)

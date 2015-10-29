@@ -9,6 +9,7 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
     {
         public int PrivateMessageCount { get; set; }
         public int ModerateCount { get; set; }
+        public string LoggedOnUserName { get; set; }
     }
 
     public class LatestUsersViewModels

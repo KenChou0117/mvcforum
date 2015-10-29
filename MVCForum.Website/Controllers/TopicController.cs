@@ -351,7 +351,7 @@ namespace MVCForum.Website.Controllers
                         }
 
                         // Quick check to see if user is locked out, when logged in
-                        if (LoggedOnReadOnlyUser.IsLockedOut || LoggedOnReadOnlyUser.DisablePosting == true || !LoggedOnReadOnlyUser.IsApproved)
+                        if (LoggedOnReadOnlyUser.IsBanned || LoggedOnReadOnlyUser.DisablePosting.Equals(true))
                         {
                             FormsAuthentication.SignOut();
                             return ErrorToHomePage(LocalizationService.GetResourceString("Errors.NoAccess"));
@@ -665,7 +665,7 @@ namespace MVCForum.Website.Controllers
             if (ModelState.IsValid)
             {
                 // Quick check to see if user is locked out, when logged in
-                if (LoggedOnReadOnlyUser.IsLockedOut || LoggedOnReadOnlyUser.DisablePosting == true || !LoggedOnReadOnlyUser.IsApproved)
+                if (LoggedOnReadOnlyUser.DisablePosting == true)
                 {
                     FormsAuthentication.SignOut();
                     return ErrorToHomePage(LocalizationService.GetResourceString("Errors.NoAccess"));

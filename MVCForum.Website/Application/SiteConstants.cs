@@ -5,51 +5,6 @@ namespace MVCForum.Website.Application
 {
     public static partial class SiteConstants
     {
-        /// <summary>
-        /// Social Login Keys
-        /// </summary>
-        public static string FacebookAppId
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["FacebookAppId"];
-            }
-        }
-        public static string FacebookAppSecret
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["FacebookAppSecret"];
-            }
-        }
-        public static string MicrosoftAppId
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["MicrosoftAppId"];
-            }
-        }
-        public static string MicrosoftAppSecret
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["MicrosoftAppSecret"];
-            }
-        }
-        public static string GooglePlusAppId
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["GooglePlusAppId"];
-            }
-        }
-        public static string GooglePlusAppSecret
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["GooglePlusAppSecret"];
-            }
-        }
 
         /// <summary>
         /// File Upload Settings

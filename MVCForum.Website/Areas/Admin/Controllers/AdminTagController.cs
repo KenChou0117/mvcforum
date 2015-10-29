@@ -12,7 +12,7 @@ using MVCForum.Website.Controllers;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public partial class AdminTagController : BaseController
     {
         private readonly ITopicTagService _topicTagService;

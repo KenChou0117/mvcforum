@@ -194,7 +194,6 @@ namespace MVCForum.Data.Migrations
                         EnableSpamReporting = true,
                         EnableMemberReporting = true,
                         EnableEmailSubscriptions = true,
-                        ManuallyAuthoriseNewMembers = false,
                         EmailAdminOnNewMemberSignUp = true,
                         TopicsPerPage = 20,
                         PostsPerPage = 20,
@@ -215,7 +214,6 @@ namespace MVCForum.Data.Migrations
                         DefaultLanguage = language,
                         ActivitiesPerPage = 20,
                         EnableAkisment = false,
-                        EnableSocialLogins = false,
                         EnablePolls = true
                     };
 
@@ -317,80 +315,6 @@ namespace MVCForum.Data.Migrations
                     // Save to the database
                     context.SaveChanges();
                 }
-
-                // If the admin user exists then don't do anything else
-                const string adminUsername = "admin";
-                if (context.MembershipUser.FirstOrDefault(x => x.UserName == adminUsername) == null)
-                {
-                    // create the admin user and put him in the admin role
-                    var admin = new MembershipUser
-                    {
-                        Email = "you@email.com",
-                        UserName = adminUsername,
-                        Password = "password",
-                        IsApproved = true,
-                        DisableEmailNotifications = false,
-                        DisablePosting = false,
-                        DisablePrivateMessages = false,
-                        CreateDate = DateTime.UtcNow,
-                        LastLockoutDate = (DateTime) SqlDateTime.MinValue,
-                        LastPasswordChangedDate = (DateTime) SqlDateTime.MinValue,
-                        LastLoginDate = DateTime.UtcNow,
-                        LastActivityDate = null,
-                        IsLockedOut = false,
-                        Slug = ServiceHelpers.CreateUrl(adminUsername)
-                    };
-
-                    // Hash the password
-                    var salt = StringUtils.CreateSalt(AppConstants.SaltSize);
-                    var hash = StringUtils.GenerateSaltedHash(admin.Password, salt);
-                    admin.Password = hash;
-                    admin.PasswordSalt = salt;
-
-                    // Put the admin in the admin role
-                    admin.Roles = new List<MembershipRole> {adminRole};
-
-                    context.MembershipUser.Add(admin);
-                    context.SaveChanges();
-
-                    // Now add read me
-                    const string name = "Read Me";
-                    var category = context.Category.FirstOrDefault();
-                    var topic = new Topic
-                    {
-                        Category = category,
-                        CreateDate = DateTime.UtcNow,
-                        User = admin,
-                        IsSticky = true,
-                        Name = name,
-                        Slug = ServiceHelpers.CreateUrl(name)
-                    };
-
-                    context.Topic.Add(topic);
-                    context.SaveChanges();
-
-                    const string readMeText = @"<p>We have auto created an admin user for you to manage the site</p>
-<p>Username: admin<br />Password: password</p>
-<p><strong>Important: </strong>Please update the password and username before putting this site live.</p>
-<p>Most of the docs are on the <a href=""http://www.mvcforum.com"">website</a> and <a href=""https://github.com/leen3o/mvcforum"">github</a></p>";
-
-                    var post = new Post
-                    {
-                        DateCreated = DateTime.UtcNow,
-                        DateEdited = DateTime.UtcNow,
-                        Topic = topic,
-                        IsTopicStarter = true,
-                        User = admin,
-                        PostContent = readMeText,
-                        SearchField = name
-                    };
-
-                    topic.LastPost = post;
-
-                    context.Post.Add(post);
-                    context.SaveChanges();
-                }
-
             }
             else
             {

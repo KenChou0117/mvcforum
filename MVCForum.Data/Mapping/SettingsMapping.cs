@@ -19,7 +19,6 @@ namespace MVCForum.Data.Mapping
             Property(x => x.EnableSpamReporting).IsOptional();
             Property(x => x.EnableMemberReporting).IsOptional();
             Property(x => x.EnableEmailSubscriptions).IsOptional();
-            Property(x => x.ManuallyAuthoriseNewMembers).IsOptional();
             Property(x => x.EmailAdminOnNewMemberSignUp).IsOptional();
             Property(x => x.TopicsPerPage).IsOptional();
             Property(x => x.PostsPerPage).IsOptional();
@@ -45,12 +44,7 @@ namespace MVCForum.Data.Mapping
             Property(x => x.EnableAkisment).IsOptional();
             Property(x => x.AkismentKey).IsOptional().HasMaxLength(100);
             Property(x => x.CurrentDatabaseVersion).IsOptional().HasMaxLength(10);
-            Property(x => x.SpamQuestion).IsOptional().HasMaxLength(500);
-            Property(x => x.SpamAnswer).IsOptional().HasMaxLength(500);
-            Property(x => x.EnableSocialLogins).IsOptional();
             Property(x => x.EnablePolls).IsOptional();
-            Property(x => x.NewMemberEmailConfirmation).IsOptional();
-            Property(x => x.SuspendRegistration).IsOptional();
             Property(x => x.PageTitle).IsOptional().HasMaxLength(80);
             Property(x => x.MetaDesc).IsOptional().HasMaxLength(200);
             Property(x => x.CustomHeaderCode).IsOptional();

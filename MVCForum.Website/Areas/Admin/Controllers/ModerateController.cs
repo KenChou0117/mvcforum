@@ -7,10 +7,11 @@ using MVCForum.Domain.DomainModel;
 using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Areas.Admin.ViewModels;
+using MVCForum.Website.Application;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public partial class ModerateController : BaseAdminController
     {        
         private readonly IRoleService _roleService;

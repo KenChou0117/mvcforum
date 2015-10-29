@@ -14,48 +14,48 @@ namespace MVCForum.Website.ViewModels
         public IList<MembershipUser> ActiveMembers { get; set; }
     }
 
-    public class MemberAddViewModel
-    {
-        [Required]
-        [ForumMvcResourceDisplayName("Members.Label.Username")]
-        [StringLength(150, MinimumLength = 4)]
-        public string UserName { get; set; }
+    //public class MemberAddViewModel
+    //{
+    //    [Required]
+    //    [ForumMvcResourceDisplayName("Members.Label.Username")]
+    //    [StringLength(150, MinimumLength = 4)]
+    //    public string UserName { get; set; }
 
-        [Required]
-        [EmailAddress]
-        [ForumMvcResourceDisplayName("Members.Label.EmailAddress")]
-        public string Email { get; set; }
+    //    [Required]
+    //    [EmailAddress]
+    //    [ForumMvcResourceDisplayName("Members.Label.EmailAddress")]
+    //    public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.Password")]
-        public string Password { get; set; }
+    //    [Required]
+    //    [StringLength(100, MinimumLength = 6)]
+    //    [DataType(DataType.Password)]
+    //    [ForumMvcResourceDisplayName("Members.Label.Password")]
+    //    public string Password { get; set; }
 
-        [DataType(DataType.Password)]
-        [System.ComponentModel.DataAnnotations.Compare("Password")]
-        [ForumMvcResourceDisplayName("Members.Label.ConfirmPassword")]
-        public string ConfirmPassword { get; set; }
+    //    [DataType(DataType.Password)]
+    //    [System.ComponentModel.DataAnnotations.Compare("Password")]
+    //    [ForumMvcResourceDisplayName("Members.Label.ConfirmPassword")]
+    //    public string ConfirmPassword { get; set; }
 
-        [Required]
-        public int MinPasswordLength { get; set; }
+    //    [Required]
+    //    public int MinPasswordLength { get; set; }
 
-        [ForumMvcResourceDisplayName("Members.Label.UserIsApproved")]
-        public bool IsApproved { get; set; }
+    //    [ForumMvcResourceDisplayName("Members.Label.UserIsApproved")]
+    //    public bool IsApproved { get; set; }
 
-        [ForumMvcResourceDisplayName("Members.Label.Comment")]
-        public string Comment { get; set; }
+    //    [ForumMvcResourceDisplayName("Members.Label.Comment")]
+    //    public string Comment { get; set; }
 
-        [ForumMvcResourceDisplayName("Members.Label.Roles")]
-        public string[] Roles { get; set; }
+    //    [ForumMvcResourceDisplayName("Members.Label.Roles")]
+    //    public string[] Roles { get; set; }
 
-        public IList<MembershipRole> AllRoles { get; set; }
-        public string SpamAnswer { get; set; }
-        public string ReturnUrl { get; set; }
-        public string SocialProfileImageUrl { get; set; }
-        public string UserAccessToken { get; set; }
-        public LoginType LoginType { get; set; }
-    }
+    //    public IList<MembershipRole> AllRoles { get; set; }
+    //    public string SpamAnswer { get; set; }
+    //    public string ReturnUrl { get; set; }
+    //    public string SocialProfileImageUrl { get; set; }
+    //    public string UserAccessToken { get; set; }
+    //    public LoginType LoginType { get; set; }
+    //}
 
     public class MemberFrontEndEditViewModel
     {
@@ -108,23 +108,6 @@ namespace MVCForum.Website.ViewModels
         [ForumMvcResourceDisplayName("Members.Label.DisableEmailNotifications")]
         public bool DisableEmailNotifications { get; set; }
 
-    }
-
-    public class LogOnViewModel
-    {
-        public string ReturnUrl { get; set; }
-
-        [Required]
-        [ForumMvcResourceDisplayName("Members.Label.Username")]
-        public string UserName { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.Password")]
-        public string Password { get; set; }
-
-        [ForumMvcResourceDisplayName("Members.Label.RememberMe")]
-        public bool RememberMe { get; set; }
     }
 
     public class ViewMemberViewModel
@@ -193,51 +176,4 @@ namespace MVCForum.Website.ViewModels
         public int TotalPoints { get; set; }
     }
 
-    public class ForgotPasswordViewModel
-    {
-        [ForumMvcResourceDisplayName("Members.Label.EmailAddressBlank")]
-        [EmailAddress]
-        [Required]
-        public string EmailAddress { get; set; }
-    }
-
-    public class ChangePasswordViewModel
-    {
-        [Required]
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.CurrentPassword")]
-        public string OldPassword { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.NewPassword")]
-        public string NewPassword { get; set; }
-
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.ConfirmNewPassword")]
-        [System.ComponentModel.DataAnnotations.Compare("NewPassword")]
-        public string ConfirmPassword { get; set; }
-    }
-
-    public class ResetPasswordViewModel
-    {
-        [Required]
-        public Guid? Id { get; set; }
-
-        [Required]
-        public string Token { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.NewPassword")]
-        public string NewPassword { get; set; }
-
-        [DataType(DataType.Password)]
-        [ForumMvcResourceDisplayName("Members.Label.ConfirmNewPassword")]
-        [System.ComponentModel.DataAnnotations.Compare("NewPassword")]
-        public string ConfirmPassword { get; set; }
-
-    }
 }

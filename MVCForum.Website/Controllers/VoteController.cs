@@ -47,7 +47,7 @@ namespace MVCForum.Website.Controllers
             if (Request.IsAjaxRequest())
             {
                 // Quick check to see if user is locked out, when logged in
-                if (LoggedOnReadOnlyUser.IsLockedOut | !LoggedOnReadOnlyUser.IsApproved)
+                if (LoggedOnReadOnlyUser.IsBanned)
                 {
                     FormsAuthentication.SignOut();
                     throw new Exception(LocalizationService.GetResourceString("Errors.NoAccess"));
@@ -91,7 +91,7 @@ namespace MVCForum.Website.Controllers
             if (Request.IsAjaxRequest())
             {
                 // Quick check to see if user is locked out, when logged in
-                if (LoggedOnReadOnlyUser.IsLockedOut | !LoggedOnReadOnlyUser.IsApproved)
+                if (LoggedOnReadOnlyUser.IsBanned)
                 {
                     FormsAuthentication.SignOut();
                     throw new Exception(LocalizationService.GetResourceString("Errors.NoAccess"));
@@ -197,7 +197,7 @@ namespace MVCForum.Website.Controllers
             if (Request.IsAjaxRequest())
             {
                 // Quick check to see if user is locked out, when logged in
-                if (LoggedOnReadOnlyUser.IsLockedOut | !LoggedOnReadOnlyUser.IsApproved)
+                if (LoggedOnReadOnlyUser.IsBanned)
                 {
                     FormsAuthentication.SignOut();
                     throw new Exception(LocalizationService.GetResourceString("Errors.NoAccess"));

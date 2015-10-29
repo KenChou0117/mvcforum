@@ -24,27 +24,6 @@ namespace MVCForum.Data.Repositories
         }
 
         /// <summary>
-        /// Get a user by username
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="removeTracking"></param>
-        /// <returns></returns>
-        public MembershipUser GetUser(string username, bool removeTracking = false)
-        {
-            if (removeTracking)
-            {
-                return _context.MembershipUser
-                    .Include(x => x.Roles)
-                    .AsNoTracking()
-                    .FirstOrDefault(name => name.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));
-            }
-            return _context.MembershipUser
-                .Include(x => x.Roles)
-                .FirstOrDefault(name => name.UserName.Equals(username, StringComparison.CurrentCultureIgnoreCase));
-            //.FirstOrDefault(name => String.Equals(name.UserName, username, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        /// <summary>
         /// Get a user by id
         /// </summary>
         /// <param name="userId"></param>
@@ -68,33 +47,33 @@ namespace MVCForum.Data.Repositories
         /// </summary>
         /// <param name="facebookId"></param>
         /// <returns></returns>
-        public MembershipUser GetUserByFacebookId(long facebookId)
-        {
-            return _context.MembershipUser
-                .Include(x => x.Roles)
-                .FirstOrDefault(name => name.FacebookId == facebookId);
-        }
+        //public MembershipUser GetUserByFacebookId(long facebookId)
+        //{
+        //    return _context.MembershipUser
+        //        .Include(x => x.Roles)
+        //        .FirstOrDefault(name => name.FacebookId == facebookId);
+        //}
 
-        public MembershipUser GetUserByTwitterId(string twitterId)
-        {
-            return _context.MembershipUser
-                .Include(x => x.Roles)
-                .FirstOrDefault(name => name.TwitterAccessToken == twitterId);
-        }
+        //public MembershipUser GetUserByTwitterId(string twitterId)
+        //{
+        //    return _context.MembershipUser
+        //        .Include(x => x.Roles)
+        //        .FirstOrDefault(name => name.TwitterAccessToken == twitterId);
+        //}
 
-        public MembershipUser GetUserByGoogleId(string googleId)
-        {
-            return _context.MembershipUser
-                .Include(x => x.Roles)
-                .FirstOrDefault(name => name.GoogleAccessToken == googleId);
-        }
+        //public MembershipUser GetUserByGoogleId(string googleId)
+        //{
+        //    return _context.MembershipUser
+        //        .Include(x => x.Roles)
+        //        .FirstOrDefault(name => name.GoogleAccessToken == googleId);
+        //}
 
-        public MembershipUser GetUserByOpenIdToken(string openId)
-        {
-            return _context.MembershipUser
-                .Include(x => x.Roles)
-                .FirstOrDefault(name => name.MiscAccessToken == openId);
-        }
+        //public MembershipUser GetUserByOpenIdToken(string openId)
+        //{
+        //    return _context.MembershipUser
+        //        .Include(x => x.Roles)
+        //        .FirstOrDefault(name => name.MiscAccessToken == openId);
+        //}
 
         public IList<MembershipUser> SearchMembers(string username, int amount)
         {

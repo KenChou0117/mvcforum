@@ -37,8 +37,8 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             LocalizationService.CurrentLanguage = LocalizationService.DefaultLanguage;
             SettingsService = settingsService;
             LoggingService = loggingService;
-
-            LoggedOnReadOnlyUser = MembershipService.GetUserById(Guid.Parse(System.Web.HttpContext.Current.User.Identity.Name), true);
+            Guid userId = Guid.Empty;
+            LoggedOnReadOnlyUser = Guid.TryParse(System.Web.HttpContext.Current.User.Identity.Name, out userId) ? MembershipService.GetUserById(userId, true) : null;
         }
 
         protected void ShowMessage(GenericMessageViewModel messageViewModel)

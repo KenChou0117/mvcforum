@@ -18,11 +18,10 @@ namespace MVCForum.Website.ViewModels.Mapping
         {
             var viewModel = new SingleMemberListViewModel
             {
-                IsApproved = user.IsApproved,
                 Id = user.Id,
-                IsLockedOut = user.IsLockedOut,
                 Roles = user.Roles.Select(x => x.RoleName).ToArray(),
-                UserName = user.UserName
+                UserName = user.UserName,
+                Email = user.Email
             };
             return viewModel;
         }
@@ -31,9 +30,7 @@ namespace MVCForum.Website.ViewModels.Mapping
         {
             var viewModel = new MemberEditViewModel
             {
-                IsApproved = user.IsApproved,
                 Id = user.Id,
-                IsLockedOut = user.IsLockedOut,
                 IsBanned = user.IsBanned,
                 Roles = user.Roles.Select(x => x.RoleName).ToArray(),
                 UserName = user.UserName,
@@ -42,8 +39,6 @@ namespace MVCForum.Website.ViewModels.Mapping
                 Email = user.Email,
                 Facebook = user.Facebook,
                 Location = user.Location,
-                PasswordAnswer = user.PasswordAnswer,
-                PasswordQuestion = user.PasswordQuestion,
                 Signature = user.Signature,
                 Twitter = user.Twitter,
                 Website = user.Website,
@@ -91,10 +86,7 @@ namespace MVCForum.Website.ViewModels.Mapping
             existingSettings.DisplayEditedBy = settingsViewModel.DisplayEditedBy;
             existingSettings.EnableMarkAsSolution = settingsViewModel.EnableMarkAsSolution;
             existingSettings.MarkAsSolutionReminderTimeFrame = settingsViewModel.MarkAsSolutionReminderTimeFrame;
-            //existingSettings.EnableSpamReporting = settingsViewModel.EnableSpamReporting;
-            //existingSettings.EnableMemberReporting = settingsViewModel.EnableMemberReporting;
             existingSettings.EnableEmailSubscriptions = settingsViewModel.EnableEmailSubscriptions;
-            existingSettings.ManuallyAuthoriseNewMembers = settingsViewModel.ManuallyAuthoriseNewMembers;
             existingSettings.EmailAdminOnNewMemberSignUp = settingsViewModel.EmailAdminOnNewMemberSignUp;
             existingSettings.TopicsPerPage = settingsViewModel.TopicsPerPage;
             existingSettings.PostsPerPage = settingsViewModel.PostsPerPage;
@@ -115,16 +107,9 @@ namespace MVCForum.Website.ViewModels.Mapping
             existingSettings.SMTPUsername = settingsViewModel.SMTPUsername;
             existingSettings.SMTPPassword = settingsViewModel.SMTPPassword;
             existingSettings.Theme = settingsViewModel.Theme;
-            //existingSettings.AkismentKey = settingsViewModel.AkismentKey;
-            //existingSettings.EnableAkisment = settingsViewModel.EnableAkisment;
             existingSettings.SMTPPort = settingsViewModel.SMTPPort.ToString();
-            //existingSettings.SpamQuestion = settingsViewModel.SpamQuestion;
-            //existingSettings.SpamAnswer = settingsViewModel.SpamAnswer;
             existingSettings.SMTPEnableSSL = settingsViewModel.SMTPEnableSSL;
-            //existingSettings.EnableSocialLogins = settingsViewModel.EnableSocialLogins;
             existingSettings.EnablePolls = settingsViewModel.EnablePolls;
-            existingSettings.SuspendRegistration = settingsViewModel.SuspendRegistration;
-            existingSettings.NewMemberEmailConfirmation = settingsViewModel.NewMemberEmailConfirmation;
             existingSettings.PageTitle = settingsViewModel.PageTitle;
             existingSettings.MetaDesc = settingsViewModel.MetaDesc;
             existingSettings.EnableEmoticons = settingsViewModel.EnableEmoticons;
@@ -144,10 +129,7 @@ namespace MVCForum.Website.ViewModels.Mapping
                 DisplayEditedBy = currentSettings.DisplayEditedBy,
                 EnableMarkAsSolution = currentSettings.EnableMarkAsSolution,
                 MarkAsSolutionReminderTimeFrame = currentSettings.MarkAsSolutionReminderTimeFrame ?? 0,
-                //EnableSpamReporting = currentSettings.EnableSpamReporting,
-                //EnableMemberReporting = currentSettings.EnableMemberReporting,
                 EnableEmailSubscriptions = currentSettings.EnableEmailSubscriptions,
-                ManuallyAuthoriseNewMembers = currentSettings.ManuallyAuthoriseNewMembers,
                 EmailAdminOnNewMemberSignUp = currentSettings.EmailAdminOnNewMemberSignUp,
                 TopicsPerPage = currentSettings.TopicsPerPage,
                 PostsPerPage = currentSettings.PostsPerPage,
@@ -167,18 +149,11 @@ namespace MVCForum.Website.ViewModels.Mapping
                 SMTP = currentSettings.SMTP,
                 SMTPUsername = currentSettings.SMTPUsername,
                 SMTPPassword = currentSettings.SMTPPassword,
-                //AkismentKey = currentSettings.AkismentKey,
-                //EnableAkisment = currentSettings.EnableAkisment != null && (bool)currentSettings.EnableAkisment,
-                NewMemberEmailConfirmation = currentSettings.NewMemberEmailConfirmation != null && (bool)currentSettings.NewMemberEmailConfirmation,
                 Theme = currentSettings.Theme,
                 SMTPPort = string.IsNullOrEmpty(currentSettings.SMTPPort) ? null : (int?)(Convert.ToInt32(currentSettings.SMTPPort)),
-                //SpamQuestion = currentSettings.SpamQuestion,
-                //SpamAnswer = currentSettings.SpamAnswer,
                 Themes = AppHelpers.GetThemeFolders(),
                 SMTPEnableSSL = currentSettings.SMTPEnableSSL ?? false,
-                //EnableSocialLogins = currentSettings.EnableSocialLogins ?? false,
                 EnablePolls = currentSettings.EnablePolls ?? false,
-                SuspendRegistration = currentSettings.SuspendRegistration ?? false,
                 PageTitle = currentSettings.PageTitle,
                 MetaDesc = currentSettings.MetaDesc,
                 EnableEmoticons = currentSettings.EnableEmoticons == true,

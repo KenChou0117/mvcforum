@@ -90,7 +90,6 @@
     <Compile Include="DomainModel\Attributes\NameAttribute.cs" />
     <Compile Include="DomainModel\Attributes\IdAttribute.cs" />
     <Compile Include="DomainModel\Entities\Badge.cs" />
-    <Compile Include="DomainModel\Entities\BannedEmail.cs" />
     <Compile Include="DomainModel\Entities\Category.cs" />
     <Compile Include="DomainModel\Entities\CategoryPermissions.cs" />
     <Compile Include="DomainModel\Entities\CategoryNotification.cs" />
@@ -177,7 +176,6 @@
     <Compile Include="Interfaces\Repositories\IFavouriteRepository.cs" />
     <Compile Include="Interfaces\Repositories\IUploadedFileRepository.cs" />
     <Compile Include="Interfaces\Repositories\IBannedWordRepository.cs" />
-    <Compile Include="Interfaces\Repositories\IBannedEmailRepository.cs" />
     <Compile Include="Interfaces\Repositories\IInstallerRepository.cs" />
     <Compile Include="Interfaces\Repositories\IPollAnswerRepository.cs" />
     <Compile Include="Interfaces\Repositories\IPollVoteRepository.cs" />
@@ -199,7 +197,6 @@
     <Compile Include="Interfaces\Repositories\ISettingsRepository.cs" />
     <Compile Include="Interfaces\Repositories\ITopicRepository.cs" />
     <Compile Include="Interfaces\Repositories\IVoteRepository.cs" />
-    <Compile Include="Interfaces\Services\IBannedEmailService.cs" />
     <Compile Include="Interfaces\Services\IBannedWordService.cs" />
     <Compile Include="Interfaces\Services\IGlobalPermissionForRoleService.cs" />
     <Compile Include="Interfaces\Services\IFavouriteService.cs" />

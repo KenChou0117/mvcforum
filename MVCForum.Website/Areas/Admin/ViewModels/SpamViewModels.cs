@@ -11,13 +11,13 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
         public string AkismentKey { get; set; }
     }
 
-    public class RegistrationQuestionViewModel
-    {
-        [DisplayName("Your Spam Question")]
-        public string SpamQuestion { get; set; }
-        [DisplayName("The Answer to the Spam question")]
-        public string SpamAnswer { get; set; }
-    }
+    //public class RegistrationQuestionViewModel
+    //{
+    //    [DisplayName("Your Spam Question")]
+    //    public string SpamQuestion { get; set; }
+    //    [DisplayName("The Answer to the Spam question")]
+    //    public string SpamAnswer { get; set; }
+    //}
 
     public class SpamReportingViewModel
     {

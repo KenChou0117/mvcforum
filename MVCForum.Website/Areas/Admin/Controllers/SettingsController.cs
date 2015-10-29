@@ -13,7 +13,7 @@ using MVCForum.Website.ViewModels.Mapping;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public class SettingsController : BaseAdminController
     {
         private readonly IRoleService _roleService;

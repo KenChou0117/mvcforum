@@ -19,23 +19,13 @@ namespace MVCForum.Domain.Interfaces.Services
     public partial interface IMembershipService
     {
         MembershipUser SanitizeUser(MembershipUser membershipUser);
-        bool ValidateUser(string userName, string password, int maxInvalidPasswordAttempts);
-        LoginAttemptStatus LastLoginStatus { get; }
-        string[] GetRolesForUser(string username);
-        MembershipUser GetUser(string username, bool removeTracking = false);
+        string[] GetRolesForUser(Guid userId);
         MembershipUser GetUserById(Guid? UserId, bool removeTracking = false);
         MembershipUser GetUserByEmail(string email);
         MembershipUser GetUserBySlug(string slug);
-        MembershipUser GetUserByFacebookId(long facebookId);
-        MembershipUser GetUserByTwitterId(string twitterId);
-        MembershipUser GetUserByGoogleId(string googleId);
-        MembershipUser GetUserByOpenIdToken(string openId);
         IList<MembershipUser> GetUsersById(List<Guid> guids);
         IList<MembershipUser> GetUsersByDaysPostsPoints(int amoutOfDaysSinceRegistered, int amoutOfPosts);
         MembershipUser GetUser(Guid id);
-        bool ChangePassword(MembershipUser user, string oldPassword, string newPassword);
-        bool ResetPassword(MembershipUser user, string newPassword);
-        void UnlockUser(string username, bool resetPasswordAttempts);
         MembershipCreateStatus CreateUser(MembershipUser newUser);
         string ErrorCodeToString(MembershipCreateStatus createStatus);
         MembershipUser CreateEmptyUser();
@@ -51,6 +41,7 @@ namespace MVCForum.Domain.Interfaces.Services
         int MemberCount();
         string ToCsv();
         CsvReport FromCsv(List<string> allLines);
+
         /// <summary>
         /// Completed scrubs a users account clean
         /// Clears everything - Posts, polls, votes, favourites, profile etc...
@@ -58,10 +49,5 @@ namespace MVCForum.Domain.Interfaces.Services
         /// <param name="user"></param>
         /// <param name="unitOfWork"></param>
         void ScrubUsers(MembershipUser user, IUnitOfWork unitOfWork);
-
-        bool UpdatePasswordResetToken(MembershipUser user);
-        bool ClearPasswordResetToken(MembershipUser user);
-        bool IsPasswordResetTokenValid(MembershipUser user, string token);
-
     }
 }

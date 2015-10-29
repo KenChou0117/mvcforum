@@ -247,6 +247,7 @@
     <Compile Include="Application\CustomActionResults\CsvFileResult.cs" />
     <Compile Include="Application\ExtensionMethods\Extensions.cs" />
     <Compile Include="Application\ScheduledJobs\MarkAsSolutionReminderJob.cs" />
+    <Compile Include="Application\SSOAuthorizeAttribute.cs" />
     <Compile Include="Application\ViewEngine\ForumViewEngine.cs" />
     <Compile Include="Application\Localization\Localizer.cs" />
     <Compile Include="Application\ServiceFactory.cs" />
@@ -263,20 +264,16 @@
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminLanguageController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminBadgeController.cs" />
-    <Compile Include="Areas\Admin\Controllers\AdminSocialController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminSpamController.cs" />
-    <Compile Include="Areas\Admin\Controllers\BannedEmailController.cs" />
     <Compile Include="Areas\Admin\Controllers\BatchController.cs" />
     <Compile Include="Areas\Admin\Controllers\BannedWordController.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\ModerateController.cs" />
     <Compile Include="Areas\Admin\ViewModels\AdminBadgeViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\AjaxAdminViewModels.cs" />
-    <Compile Include="Areas\Admin\ViewModels\BannedEmailViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\BatchViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\BannedWordViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\DashboardViewModels.cs" />
-    <Compile Include="Areas\Admin\ViewModels\SocialViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\SpamViewModels.cs" />
     <Compile Include="Controllers\ApiControllers\TinyMcePluginsController.cs" />
     <Compile Include="Controllers\BaseInstallController.cs" />
@@ -301,9 +298,6 @@
     <Compile Include="Controllers\FavouriteController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\InstallController.cs" />
-    <Compile Include="Controllers\OAuthControllers\FacebookOAuthController.cs" />
-    <Compile Include="Controllers\OAuthControllers\GoogleOAuthController.cs" />
-    <Compile Include="Controllers\OAuthControllers\MicrosoftOAuthController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\PrivateMessageController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
@@ -320,7 +314,6 @@
     <Compile Include="Controllers\TopicController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\VoteController.cs" />
-    <Compile Include="Events\ExampleBeforeLogin.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -334,8 +327,6 @@
     <Compile Include="Application\ScheduledJobs\EmailJob.cs" />
     <Compile Include="ViewModels\BlockViewModels.cs" />
     <Compile Include="ViewModels\FavouriteViewModels.cs" />
-    <Compile Include="ViewModels\OAuth\FacebookOAuthData.cs" />
-    <Compile Include="ViewModels\OAuth\GoogleOAuthData.cs" />
     <Compile Include="ViewModels\UploadViewModels.cs" />
     <Compile Include="ViewModels\BadgeViewModels.cs" />
     <Compile Include="ViewModels\CategoryViewModels.cs" />
@@ -882,9 +873,7 @@
       <DependentUpon>Admin.css</DependentUpon>
     </Content>
     <Content Include="Areas\Admin\Views\Dashboard\MainAdminNav.cshtml" />
-    <Content Include="Areas\Admin\Views\AdminSocial\Index.cshtml" />
     <Content Include="Areas\Admin\Views\AdminSpam\Akismet.cshtml" />
-    <Content Include="Areas\Admin\Views\AdminSpam\RegistrationQuestion.cshtml" />
     <Content Include="Areas\Admin\Views\AdminSpam\SpamReporting.cshtml" />
     <Content Include="Areas\Admin\Views\Settings\CustomCode.cshtml" />
     <Content Include="Areas\Admin\Views\AdminTag\MoveTags.cshtml" />
@@ -1043,6 +1032,9 @@
     <Content Include="Scripts\tinymce\themes\modern\theme.min.js" />
     <Content Include="Scripts\tinymce\tinymce.js" />
     <Content Include="Scripts\tinymce\tinymce.min.js" />
+    <Content Include="Views\Shared\_LogOnPartial.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Shared\_SlideOutPanel.cshtml" />
     <Content Include="Views\Post\GetAllPostLikes.cshtml" />
     <Content Include="Views\File\ImageUploadTinyMce.cshtml" />
@@ -1109,9 +1101,7 @@
     <Content Include="Areas\Admin\Views\Shared\_GetCurrentVersion.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\TodaysTopics.cshtml" />
     <Content Include="Installer\en-GB.csv" />
-    <Content Include="Areas\Admin\Views\Batch\BatchDeleteMembers.cshtml" />
     <Content Include="Areas\Admin\Views\Batch\BatchMoveTopics.cshtml" />
-    <Content Include="Areas\Admin\Views\BannedEmail\Index.cshtml" />
     <Content Include="Areas\Admin\Views\BannedWord\Index.cshtml" />
     <Content Include="Scripts\jquery.placeholder.min.js" />
     <Content Include="Scripts\markdown\Markdown.Converter.js" />
@@ -1205,7 +1195,6 @@
     <Content Include="Views\Members\GetCurrentActiveMembers.cshtml" />
     <Content Include="Views\Members\GetMemberDiscussions.cshtml" />
     <Content Include="Views\Members\LatestMembersJoined.cshtml" />
-    <Content Include="Views\Members\LogOn.cshtml" />
     <Content Include="Views\Members\Register.cshtml" />
     <Content Include="Views\Members\Report.cshtml" />
     <Content Include="Views\Members\Search.cshtml" />
@@ -1223,7 +1212,6 @@
     <Content Include="Views\Shared\_EmailConfirmationNotice.cshtml" />
     <Content Include="Views\Shared\_LanguagePartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Shared\_LogOnPartial.cshtml" />
     <Content Include="Views\Shared\_ModeratePost.cshtml" />
     <Content Include="Views\Shared\_ModerateTopic.cshtml" />
     <Content Include="Views\Shared\_NoScript.cshtml" />
@@ -1345,7 +1333,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Web.config" />
+    <Content Include="Areas\Admin\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Shared\_AdminLayout.cshtml" />

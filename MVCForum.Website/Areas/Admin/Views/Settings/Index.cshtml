@@ -83,14 +83,6 @@
                     </div>
 
                     <div class="checkbox">
-                        @using (Html.BeginLabelFor(m => m.SuspendRegistration, new { @class = "checkbox" }))
-                        {
-                            @Html.CheckBoxFor(m => m.SuspendRegistration)
-                        }
-                        @Html.ValidationMessageFor(m => m.SuspendRegistration)
-                    </div>
-
-                    <div class="checkbox">
                         @using (Html.BeginLabelFor(m => m.EnableMarkAsSolution, new { @class = "checkbox" }))
                         {
                             @Html.CheckBoxFor(m => m.EnableMarkAsSolution)
@@ -145,27 +137,11 @@
                     </div>
 
                     <div class="checkbox">
-                        @using (Html.BeginLabelFor(m => m.ManuallyAuthoriseNewMembers, new { @class = "checkbox" }))
-                        {
-                            @Html.CheckBoxFor(m => m.ManuallyAuthoriseNewMembers)
-                        }
-                        @Html.ValidationMessageFor(m => m.ManuallyAuthoriseNewMembers)
-                    </div>
-
-                    <div class="checkbox">
                         @using (Html.BeginLabelFor(m => m.EmailAdminOnNewMemberSignUp, new { @class = "checkbox" }))
                         {
                             @Html.CheckBoxFor(m => m.EmailAdminOnNewMemberSignUp)
                         }
                         @Html.ValidationMessageFor(m => m.EmailAdminOnNewMemberSignUp)
-                    </div>
-
-                    <div class="checkbox">
-                        @using (Html.BeginLabelFor(m => m.NewMemberEmailConfirmation, new { @class = "checkbox" }))
-                        {
-                            @Html.CheckBoxFor(m => m.NewMemberEmailConfirmation)
-                        }
-                        @Html.ValidationMessageFor(m => m.NewMemberEmailConfirmation)
                     </div>
 
                     <div class="checkbox">

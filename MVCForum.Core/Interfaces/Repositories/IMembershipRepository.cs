@@ -6,12 +6,7 @@ namespace MVCForum.Domain.Interfaces.Repositories
 {
     public partial interface IMembershipRepository
     {
-        MembershipUser GetUser(string username, bool removeTracking = false);
         MembershipUser GetUserById(Guid? userId, bool removeTracking = false);
-        MembershipUser GetUserByFacebookId(long facebookId);
-        MembershipUser GetUserByTwitterId(string twitterId);
-        MembershipUser GetUserByGoogleId(string googleId);
-        MembershipUser GetUserByOpenIdToken(string openId);
         IList<MembershipUser> SearchMembers(string username, int amount);
         IList<MembershipUser> GetActiveMembers();
         IList<MembershipUser> GetUsersByDaysPostsPoints(int amoutOfDaysSinceRegistered, int amoutOfPosts);

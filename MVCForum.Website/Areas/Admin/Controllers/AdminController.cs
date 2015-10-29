@@ -3,10 +3,11 @@ using MVCForum.Domain.Constants;
 using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Utilities;
+using MVCForum.Website.Application;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public partial class AdminController : BaseAdminController
     {
 

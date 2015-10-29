@@ -250,7 +250,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteLanguageConfirmation(Guid id)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -289,7 +289,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteLanguage(string buttonYes, string buttonNo, Guid id)
         {
             if (buttonYes != null)
@@ -319,7 +319,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// </summary>
         /// <param name="resourceKeyId"></param>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteResourceConfirmation(Guid resourceKeyId)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -357,7 +357,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteResource(string buttonYes, string buttonNo, Guid id)
         {
             if (buttonYes != null)
@@ -388,7 +388,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [ChildActionOnly]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public PartialViewResult CreateLanguage()
         {
             return PartialView();
@@ -401,7 +401,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult CreateLanguage(CreateLanguageViewModel languageViewModel)
         {
             try
@@ -448,7 +448,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Manage resource values for a language
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult ManageLanguageResourceValues(Guid languageId, int? p, string search)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -461,7 +461,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Manage resource values for a language
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult ManageLanguageResourceKeys(Guid languageId, int? p, string search)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -474,7 +474,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Manage resource keys (for all languages)
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult ManageResourceKeys(int? p, string search)
         {
             try
@@ -552,7 +552,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Edit a resource in all languages
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult EditAll(Guid resourceKeyId)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -620,7 +620,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Add a new resource
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult AddResourceKey()
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -642,7 +642,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         // POST /Account/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult AddResourceKey(LocaleResourceKeyViewModel newResourceKeyViewModel)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())

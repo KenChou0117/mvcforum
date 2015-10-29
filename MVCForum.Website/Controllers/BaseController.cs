@@ -12,6 +12,7 @@ using System;
 using Newtonsoft.Json;
 using MVCForum.Domain.DomainModel.General;
 using MVCForum.Utilities;
+using System.Security.Principal;
 
 namespace MVCForum.Website.Controllers
 {
@@ -48,49 +49,67 @@ namespace MVCForum.Website.Controllers
             SettingsService = settingsService;
             LoggingService = loggingService;
 
-            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
+            LoggedOnReadOnlyUser = UserIsAuthenticated ? MembershipService.GetUserById(UserId, true) : null;
+            UsersRole = LoggedOnReadOnlyUser == null ? RoleService.GetRole(AppConstants.GuestRoleName, true) : LoggedOnReadOnlyUser.Roles.FirstOrDefault();
+            if (UserIsAuthenticated)
             {
-                LoggedOnReadOnlyUser = UserIsAuthenticated ? MembershipService.GetUserById(UserId, true) : null;
-                if (LoggedOnReadOnlyUser == null && UserIsAuthenticated)
-                { 
-                    //在SSO登入者，若沒有Forum的帳號，幫他建立一個帳號
-                    //從FormsAuthenticationTicket取得user資料
-                    FormsIdentity id = (FormsIdentity)LoginUser.Identity;
-                    FormsAuthenticationTicket ticket = id.Ticket;
-                    var userData = JsonConvert.DeserializeObject<MemberAuthData>(ticket.UserData);
-                    string userName = String.Format("{0}_{1}", userData.FirstName, userData.LastName);
-                    string autoUserName = userName;
-                    int index = 1;
-                    var existsUser = MembershipService.GetUser(userName, true);
-                    while (existsUser != null)
+                FormsIdentity id = (FormsIdentity)LogOnUser.Identity;
+                FormsAuthenticationTicket ticket = id.Ticket;
+                var userData = JsonConvert.DeserializeObject<MemberAuthData>(ticket.UserData);
+                string userName = String.Format("{0} {1}", userData.FirstName.Trim(), userData.LastName.Trim());
+                using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
+                {
+                    if (LoggedOnReadOnlyUser == null)
                     {
-                        autoUserName = String.Format("{0}_{1}", userName, index.ToString());
-                        existsUser = MembershipService.GetUser(autoUserName, true);
-                        index++;
+                        //在SSO登入者，若沒有Forum的帳號，幫他建立一個帳號
+                        //從FormsAuthenticationTicket取得user資料
+                        var userToSave = new MVCForum.Domain.DomainModel.MembershipUser
+                        {
+                            Id = userData.Id,
+                            UserName = userName,
+                            Email = userData.Email
+                        };
+                        var createStatus = MembershipService.CreateUser(userToSave);
+                        try
+                        {
+                            unitOfWork.SaveChanges();
+                            unitOfWork.Commit();
+                            LoggedOnReadOnlyUser = userToSave;
+                        }
+                        catch (Exception ex)
+                        {
+                            unitOfWork.Rollback();
+                            LoggingService.Error(ex);
+                        }
                     }
-                    var userToSave = new MVCForum.Domain.DomainModel.MembershipUser
+                    else
                     {
-                        Id = userData.Id,
-                        UserName = autoUserName,
-                        Email = userData.Email,
-                        Password = StringUtils.RandomString(8),
-                        IsApproved = true,
-                        Comment = String.Empty,
-                    };
-                    var createStatus = MembershipService.CreateUser(userToSave);
-                    try
-                    {
-                        unitOfWork.SaveChanges();
-                        unitOfWork.Commit();
-                        LoggedOnReadOnlyUser = userToSave;
-                    }
-                    catch (Exception ex)
-                    {
-                        unitOfWork.Rollback();
-                        LoggingService.Error(ex);
+                        //檢查user資料是否有更改，如有更改，再幫他update
+                        if (userData.Email.Trim() != LoggedOnReadOnlyUser.Email.Trim() 
+                            || userName != LoggedOnReadOnlyUser.UserName.Trim())
+                        {
+                            var user = membershipService.GetUser((Guid)UserId);
+                            if (userData.Email.Trim() != LoggedOnReadOnlyUser.Email.Trim())
+                            {
+                                user.Email = userData.Email.Trim();
+                            }
+                            if (userName != LoggedOnReadOnlyUser.UserName.Trim())
+                            {
+                                user.UserName = userName;
+                            }
+                            try
+                            {
+                                unitOfWork.SaveChanges();
+                                unitOfWork.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                unitOfWork.Rollback();
+                                LoggingService.Error(ex);
+                            }
+                        }
                     }
                 }
-                UsersRole = LoggedOnReadOnlyUser == null ? RoleService.GetRole(AppConstants.GuestRoleName, true) : LoggedOnReadOnlyUser.Roles.FirstOrDefault();
             }
         }
 
@@ -98,11 +117,6 @@ namespace MVCForum.Website.Controllers
         {
             var controller = filterContext.RouteData.Values["controller"];
             var area = filterContext.RouteData.DataTokens["area"] ?? string.Empty;
-
-            //if (Session[AppConstants.GoToInstaller] != null && Session[AppConstants.GoToInstaller].ToString() == "True")
-            //{
-            //    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Install" }, { "action", "Index" } });
-            //}
             if (SettingsService.GetSettings().IsClosed && !filterContext.IsChildAction)
             {
                 // Only redirect if its closed and user is NOT in the admin
@@ -133,7 +147,7 @@ namespace MVCForum.Website.Controllers
             }
         }
 
-        protected System.Security.Principal.IPrincipal LoginUser
+        protected System.Security.Principal.IPrincipal LogOnUser
         {
             get {
                 return System.Web.HttpContext.Current.User;
@@ -142,7 +156,10 @@ namespace MVCForum.Website.Controllers
 
         protected bool UserIsAdmin
         {
-            get { return User.IsInRole(AppConstants.AdminRoleName); }
+            get { 
+                //return User.IsInRole(AppConstants.AdminRoleName); 
+                return UsersRole.RoleName.Equals(AppConstants.AdminRoleName);
+            }
         }
 
         protected void ShowMessage(GenericMessageViewModel messageViewModel)

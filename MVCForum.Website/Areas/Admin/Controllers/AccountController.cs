@@ -112,7 +112,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// List out users and allow editing
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         private ActionResult ListUsers(int? p, string search)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -143,14 +143,14 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         /// Manage users
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult Manage(int? p, string search)
         {
             return ListUsers(p, search);
         }
 
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult Edit(Guid Id)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -166,27 +166,19 @@ namespace MVCForum.Website.Areas.Admin.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult Edit(MemberEditViewModel userModel)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
             {
                 var user = MembershipService.GetUser(userModel.Id);
-
-                // Map everything in model except properties hidden on page
                 user.Age = userModel.Age;
                 user.Comment = userModel.Comment;
-                user.Email = userModel.Email;
                 user.Facebook = userModel.Facebook;
-                user.IsApproved = userModel.IsApproved;
-                user.IsLockedOut = userModel.IsLockedOut;
                 user.IsBanned = userModel.IsBanned;
                 user.Location = userModel.Location;
-                user.PasswordAnswer = userModel.PasswordAnswer;
-                user.PasswordQuestion = userModel.PasswordQuestion;
                 user.Signature = userModel.Signature;
                 user.Twitter = userModel.Twitter;
-                user.UserName = userModel.UserName;
                 user.Website = userModel.Website;
                 user.DisableEmailNotifications = userModel.DisableEmailNotifications;
                 user.DisablePosting = userModel.DisablePosting;
@@ -214,7 +206,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         }
 
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult Delete(Guid Id, int? p, string search)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
@@ -251,7 +243,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public void UpdateUserRoles(AjaxRoleUpdateViewModel ajaxRoleUpdateViewModel)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
@@ -279,7 +271,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         #endregion
 
         #region Roles
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult ListAllRoles()
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -292,7 +284,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             }
         }
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult EditRole(Guid Id)
         {
             using (UnitOfWorkManager.NewUnitOfWork())
@@ -306,7 +298,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult EditRole(RoleViewModel role)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
@@ -336,7 +328,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             return RedirectToAction("ListAllRoles");
         }
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteRole(Guid Id)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
@@ -365,7 +357,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             return RedirectToAction("ListAllRoles");
         }
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult AddRole()
         {
             var role = new RoleViewModel();
@@ -373,7 +365,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             return View(role);
         }
 
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult DeleteUsersPosts(Guid id, bool profileClick = false)
         {
             var user = MembershipService.GetUser(id);
@@ -420,7 +412,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AppConstants.AdminRoleName)]
+        [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
         public ActionResult AddRole(RoleViewModel role)
         {
             using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())

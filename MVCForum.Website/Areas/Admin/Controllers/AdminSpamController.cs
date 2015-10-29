@@ -5,10 +5,11 @@ using MVCForum.Domain.DomainModel;
 using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Areas.Admin.ViewModels;
+using MVCForum.Website.Application;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public class AdminSpamController : BaseAdminController
     {
         private readonly Settings _settings;
@@ -40,53 +41,6 @@ namespace MVCForum.Website.Areas.Admin.Controllers
                 var settings = SettingsService.GetSettings(false);
                 settings.AkismentKey = viewModel.AkismentKey;
                 settings.EnableAkisment = viewModel.EnableAkisment;
-
-                try
-                {
-                    unitOfWork.Commit();
-                    // Show a message
-                    ShowMessage(new GenericMessageViewModel
-                    {
-                        Message = "Updated",
-                        MessageType = GenericMessages.success
-                    });
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.Error(ex);
-                    unitOfWork.Rollback();
-                    // Show a message
-                    ShowMessage(new GenericMessageViewModel
-                    {
-                        Message = "Error, Please check log",
-                        MessageType = GenericMessages.danger
-                    });
-                }
-
-                return View(viewModel);
-            }
-        }
-
-        public ActionResult RegistrationQuestion()
-        {
-            using (UnitOfWorkManager.NewUnitOfWork())
-            {
-                var viewModel = new RegistrationQuestionViewModel
-                {
-                    SpamAnswer = _settings.SpamAnswer, SpamQuestion = _settings.SpamQuestion
-                };
-                return View(viewModel);
-            }
-        }
-
-        [HttpPost]
-        public ActionResult RegistrationQuestion(RegistrationQuestionViewModel viewModel)
-        {
-            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
-            {
-                var settings = SettingsService.GetSettings(false);
-                settings.SpamAnswer = viewModel.SpamAnswer;
-                settings.SpamQuestion = viewModel.SpamQuestion;
 
                 try
                 {

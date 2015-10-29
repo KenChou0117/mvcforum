@@ -42,8 +42,6 @@ namespace MVCForum.Services
         private readonly ILoggingService _loggingService;
         private readonly ICategoryService _categoryService;
 
-        private LoginAttemptStatus _lastLoginStatus = LoginAttemptStatus.LoginSuccessful;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -104,9 +102,6 @@ namespace MVCForum.Services
             membershipUser.Avatar = StringUtils.SafePlainText(membershipUser.Avatar);
             membershipUser.Comment = StringUtils.SafePlainText(membershipUser.Comment);
             membershipUser.Email = StringUtils.SafePlainText(membershipUser.Email);
-            membershipUser.Password = StringUtils.SafePlainText(membershipUser.Password);
-            membershipUser.PasswordAnswer = StringUtils.SafePlainText(membershipUser.PasswordAnswer);
-            membershipUser.PasswordQuestion = StringUtils.SafePlainText(membershipUser.PasswordQuestion);
             membershipUser.Signature = StringUtils.GetSafeHtml(membershipUser.Signature, true);
             membershipUser.Twitter = StringUtils.SafePlainText(membershipUser.Twitter);
             membershipUser.UserName = StringUtils.SafePlainText(membershipUser.UserName);
@@ -121,23 +116,8 @@ namespace MVCForum.Services
             // a full list of status codes.
             switch (createStatus)
             {
-                case MembershipCreateStatus.DuplicateUserName:
-                    return _localizationService.GetResourceString("Members.Errors.DuplicateUserName");
-
                 case MembershipCreateStatus.DuplicateEmail:
                     return _localizationService.GetResourceString("Members.Errors.DuplicateEmail");
-
-                case MembershipCreateStatus.InvalidPassword:
-                    return _localizationService.GetResourceString("Members.Errors.InvalidPassword");
-
-                case MembershipCreateStatus.InvalidEmail:
-                    return _localizationService.GetResourceString("Members.Errors.InvalidEmail");
-
-                case MembershipCreateStatus.InvalidAnswer:
-                    return _localizationService.GetResourceString("Members.Errors.InvalidAnswer");
-
-                case MembershipCreateStatus.InvalidQuestion:
-                    return _localizationService.GetResourceString("Members.Errors.InvalidQuestion");
 
                 case MembershipCreateStatus.InvalidUserName:
                     return _localizationService.GetResourceString("Members.Errors.InvalidUserName");
@@ -155,82 +135,6 @@ namespace MVCForum.Services
         #endregion
 
         /// <summary>
-        /// Return last login status
-        /// </summary>
-        public LoginAttemptStatus LastLoginStatus
-        {
-            get { return _lastLoginStatus; }
-        }
-
-        /// <summary>
-        /// Validate a user by password
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <param name="maxInvalidPasswordAttempts"> </param>
-        /// <returns></returns>
-        public bool ValidateUser(string userName, string password, int maxInvalidPasswordAttempts)
-        {
-            userName = StringUtils.SafePlainText(userName);
-            password = StringUtils.SafePlainText(password);
-
-            _lastLoginStatus = LoginAttemptStatus.LoginSuccessful;
-
-            var user = _membershipRepository.GetUser(userName);
-
-            if (user == null)
-            {
-                _lastLoginStatus = LoginAttemptStatus.UserNotFound;
-                return false;
-            }
-
-            if (user.IsBanned)
-            {
-                _lastLoginStatus = LoginAttemptStatus.Banned;
-                return false;
-            }
-
-            if (user.IsLockedOut)
-            {
-                _lastLoginStatus = LoginAttemptStatus.UserLockedOut;
-                return false;
-            }
-
-            if (!user.IsApproved)
-            {
-                _lastLoginStatus = LoginAttemptStatus.UserNotApproved;
-                return false;
-            }
-
-            var allowedPasswordAttempts = maxInvalidPasswordAttempts;
-            if (user.FailedPasswordAttemptCount >= allowedPasswordAttempts)
-            {
-                _lastLoginStatus = LoginAttemptStatus.PasswordAttemptsExceeded;
-                return false;
-            }
-
-            var salt = user.PasswordSalt;
-            var hash = StringUtils.GenerateSaltedHash(password, salt);
-            var passwordMatches = hash == user.Password;
-
-            user.FailedPasswordAttemptCount = passwordMatches ? 0 : user.FailedPasswordAttemptCount + 1;
-
-            if (user.FailedPasswordAttemptCount >= allowedPasswordAttempts)
-            {
-                user.IsLockedOut = true;
-                user.LastLockoutDate = DateTime.UtcNow;
-            }
-
-            if (!passwordMatches)
-            {
-                _lastLoginStatus = LoginAttemptStatus.PasswordIncorrect;
-                return false;
-            }
-
-            return _lastLoginStatus == LoginAttemptStatus.LoginSuccessful;
-        }
-
-        /// <summary>
         /// Creates a new, unsaved user, with default (empty) values
         /// </summary>
         /// <returns></returns>
@@ -241,18 +145,8 @@ namespace MVCForum.Services
             return new MembershipUser
             {
                 UserName = string.Empty,
-                Password = string.Empty,
                 Email = string.Empty,
-                PasswordQuestion = string.Empty,
-                PasswordAnswer = string.Empty,
                 CreateDate = now,
-                FailedPasswordAnswerAttempt = 0,
-                FailedPasswordAttemptCount = 0,
-                LastLockoutDate = (DateTime)SqlDateTime.MinValue,
-                LastPasswordChangedDate = now,
-                IsApproved = false,
-                IsLockedOut = false,
-                LastLoginDate = (DateTime)SqlDateTime.MinValue,
             };
         }
 
@@ -282,41 +176,19 @@ namespace MVCForum.Services
                     status = MembershipCreateStatus.InvalidUserName;
                 }
 
-                // get by username
-                if (_membershipRepository.GetUser(newUser.UserName) != null)
-                {
-                    status = MembershipCreateStatus.DuplicateUserName;
-                }
-
                 // Add get by email address
                 if (_membershipRepository.GetUserByEmail(newUser.Email) != null)
                 {
                     status = MembershipCreateStatus.DuplicateEmail;
                 }
 
-                if (string.IsNullOrEmpty(newUser.Password))
-                {
-                    status = MembershipCreateStatus.InvalidPassword;
-                }
-
                 if (status == MembershipCreateStatus.Success)
                 {
-                    // Hash the password
-                    var salt = StringUtils.CreateSalt(AppConstants.SaltSize);
-                    var hash = StringUtils.GenerateSaltedHash(newUser.Password, salt);
-                    newUser.Password = hash;
-                    newUser.PasswordSalt = salt;
-
                     newUser.Roles = new List<MembershipRole> { settings.NewMemberStartingRole };
 
                     // Set dates
-                    newUser.CreateDate = newUser.LastPasswordChangedDate = DateTime.UtcNow;
-                    newUser.LastLockoutDate = (DateTime)SqlDateTime.MinValue;
-                    newUser.LastLoginDate = DateTime.UtcNow;
-
-                    newUser.IsApproved = !settings.ManuallyAuthoriseNewMembers;
-                    newUser.IsLockedOut = false;
-
+                    newUser.CreateDate = DateTime.UtcNow;
+                    newUser.IsBanned = false;
                     // url generator
                     newUser.Slug = ServiceHelpers.GenerateSlug(newUser.UserName, _membershipRepository.GetUserBySlugLike(ServiceHelpers.CreateUrl(newUser.UserName)), null);
 
@@ -359,23 +231,15 @@ namespace MVCForum.Services
         /// <param name="username"></param>
         /// <param name="removeTracking"></param>
         /// <returns></returns>
-        public MembershipUser GetUser(string username, bool removeTracking = false)
-        {
-            var member = _membershipRepository.GetUser(username, removeTracking);
-            //if (member == null && HttpContext.Current.User.Identity.Name == username)
-            //{
-            //    FormsAuthentication.SignOut();
-            //}
-            return member;
-        }
+        //public MembershipUser GetUser(string username, bool removeTracking = false)
+        //{
+        //    var member = _membershipRepository.GetUser(username, removeTracking);
+        //    return member;
+        //}
 
         public MembershipUser GetUserById(Guid? userId, bool removeTracking = false)
         {
             var member = _membershipRepository.GetUserById(userId, removeTracking);
-            //if (member == null && Guid.Parse(HttpContext.Current.User.Identity.Name) == userId)
-            //{
-            //    FormsAuthentication.SignOut();
-            //}
             return member;
         }
 
@@ -408,31 +272,31 @@ namespace MVCForum.Services
         /// </summary>
         /// <param name="facebookId"></param>
         /// <returns></returns>
-        public MembershipUser GetUserByFacebookId(long facebookId)
-        {
-            return _membershipRepository.GetUserByFacebookId(facebookId);
-        }
+        //public MembershipUser GetUserByFacebookId(long facebookId)
+        //{
+        //    return _membershipRepository.GetUserByFacebookId(facebookId);
+        //}
 
-        public MembershipUser GetUserByTwitterId(string twitterId)
-        {
-            return _membershipRepository.GetUserByTwitterId(twitterId);
-        }
+        //public MembershipUser GetUserByTwitterId(string twitterId)
+        //{
+        //    return _membershipRepository.GetUserByTwitterId(twitterId);
+        //}
 
-        public MembershipUser GetUserByGoogleId(string googleId)
-        {
-            return _membershipRepository.GetUserByGoogleId(googleId);
-        }
+        //public MembershipUser GetUserByGoogleId(string googleId)
+        //{
+        //    return _membershipRepository.GetUserByGoogleId(googleId);
+        //}
 
-        /// <summary>
-        /// Get users by openid token
-        /// </summary>
-        /// <param name="openId"></param>
-        /// <returns></returns>
-        public MembershipUser GetUserByOpenIdToken(string openId)
-        {
-            openId = StringUtils.GetSafeHtml(openId);
-            return _membershipRepository.GetUserByOpenIdToken(openId);
-        }
+        ///// <summary>
+        ///// Get users by openid token
+        ///// </summary>
+        ///// <param name="openId"></param>
+        ///// <returns></returns>
+        //public MembershipUser GetUserByOpenIdToken(string openId)
+        //{
+        //    openId = StringUtils.GetSafeHtml(openId);
+        //    return _membershipRepository.GetUserByOpenIdToken(openId);
+        //}
 
         /// <summary>
         /// Get users from a list of Id's
@@ -459,13 +323,13 @@ namespace MVCForum.Services
         /// <summary>
         /// Return the roles found for this username
         /// </summary>
-        /// <param name="username"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public string[] GetRolesForUser(string username)
+        public string[] GetRolesForUser(Guid userId)
         {
-            username = StringUtils.SafePlainText(username);
+            //username = StringUtils.SafePlainText(username);
             var roles = new List<string>();
-            var user = _membershipRepository.GetUser(username, true);
+            var user = _membershipRepository.GetUserById(userId, true);
 
             if (user != null)
             {
@@ -475,59 +339,6 @@ namespace MVCForum.Services
             return roles.ToArray();
         }
 
-        /// <summary>
-        /// Change the user's password
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <param name="oldPassword"></param>
-        /// <param name="newPassword"></param>
-        /// <returns></returns>
-        public bool ChangePassword(MembershipUser user, string oldPassword, string newPassword)
-        {
-            oldPassword = StringUtils.SafePlainText(oldPassword);
-            newPassword = StringUtils.SafePlainText(newPassword);
-
-            //n3oCacheHelper.Clear(user.UserName);
-            var existingUser = _membershipRepository.Get(user.Id);
-            var salt = existingUser.PasswordSalt;
-            var oldHash = StringUtils.GenerateSaltedHash(oldPassword, salt);
-
-            if (oldHash != existingUser.Password)
-            {
-                // Old password is wrong - do not allow update
-                return false;
-            }
-
-            // Cleared to go ahead with new password
-            salt = StringUtils.CreateSalt(AppConstants.SaltSize);
-            var newHash = StringUtils.GenerateSaltedHash(newPassword, salt);
-
-            existingUser.Password = newHash;
-            existingUser.PasswordSalt = salt;
-            existingUser.LastPasswordChangedDate = DateTime.UtcNow;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Reset a users password
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="newPassword"> </param>
-        /// <returns></returns>
-        public bool ResetPassword(MembershipUser user, string newPassword)
-        {
-            var existingUser = _membershipRepository.Get(user.Id);
-
-            var salt = StringUtils.CreateSalt(AppConstants.SaltSize);
-            var newHash = StringUtils.GenerateSaltedHash(newPassword, salt);
-
-            existingUser.Password = newHash;
-            existingUser.PasswordSalt = salt;
-            existingUser.LastPasswordChangedDate = DateTime.UtcNow;
-
-            return true;
-        }
 
         /// <summary>
         /// Get all members
@@ -627,36 +438,6 @@ namespace MVCForum.Services
         }
 
         /// <summary>
-        /// Unlock a user
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="resetPasswordAttempts">If true, also reset password attempts to zero</param>
-        public void UnlockUser(string username, bool resetPasswordAttempts)
-        {
-            {
-                var user = GetUser(username);
-
-                if (user == null)
-                {
-                    throw new ApplicationException(_localizationService.GetResourceString("Members.CantUnlock"));
-                }
-
-                var existingUser = _membershipRepository.Get(user.Id);
-
-                user.IsLockedOut = false;
-                user.Roles = existingUser.Roles;
-                user.Votes = existingUser.Votes;
-                user.Password = existingUser.Password;
-                user.PasswordSalt = existingUser.PasswordSalt;
-
-                if (resetPasswordAttempts)
-                {
-                    user.FailedPasswordAnswerAttempt = 0;
-                }
-            }
-        }
-
-        /// <summary>
         /// Convert all users into CSV format (e.g. for export)
         /// </summary>
         /// <returns></returns>
@@ -680,7 +461,7 @@ namespace MVCForum.Services
         /// <returns></returns>
         public CsvReport FromCsv(List<string> allLines)
         {
-            var usersProcessed = new List<string>();
+            var usersProcessed = new List<Guid>();
             var commaSeparator = new[] { ',' };
             var report = new CsvReport();
 
@@ -705,7 +486,7 @@ namespace MVCForum.Services
 
                     var values = line.Split(commaSeparator);
 
-                    if (values.Length < 2)
+                    if (values.Length < 3)
                     {
                         report.Errors.Add(new CsvErrorWarning
                         {
@@ -716,20 +497,33 @@ namespace MVCForum.Services
                         continue;
                     }
 
-                    var userName = values[0];
-
-                    if (userName.IsNullEmpty())
+                    var userId = Guid.Empty;
+                    Guid.TryParse(values[0].Trim(), out userId);
+                    if (userId == Guid.Empty)
                     {
                         report.Errors.Add(new CsvErrorWarning
                         {
                             ErrorWarningType = CsvErrorWarningType.MissingKeyOrValue,
-                            Message = string.Format("Line {0}: no username supplied.", lineCounter)
+                            Message = string.Format("Line {0}: no UserID supplied.", lineCounter)
                         });
 
                         continue;
                     }
 
-                    var email = values[1];
+                    var userName = values[1].Trim();
+                    if (userName.IsNullEmpty())
+                    {
+                        report.Errors.Add(new CsvErrorWarning
+                        {
+                            ErrorWarningType = CsvErrorWarningType.MissingKeyOrValue,
+                            Message = string.Format("Line {0}: no user name supplied.", lineCounter)
+                        });
+
+                        continue;
+                    }
+
+
+                    var email = values[2];
                     if (email.IsNullEmpty())
                     {
                         report.Errors.Add(new CsvErrorWarning
@@ -742,7 +536,7 @@ namespace MVCForum.Services
                     }
 
                     // get the user
-                    var userToImport = _membershipRepository.GetUser(userName);
+                    var userToImport = _membershipRepository.GetUserById(userId);
 
                     if (userToImport != null)
                     {
@@ -755,7 +549,7 @@ namespace MVCForum.Services
                         continue;
                     }
 
-                    if (usersProcessed.Contains(userName))
+                    if (usersProcessed.Contains(userId))
                     {
                         report.Errors.Add(new CsvErrorWarning
                         {
@@ -766,41 +560,40 @@ namespace MVCForum.Services
                         continue;
                     }
 
-                    usersProcessed.Add(userName);
+                    usersProcessed.Add(userId);
 
                     userToImport = CreateEmptyUser();
+                    userToImport.Id = userId;
                     userToImport.UserName = userName;
                     userToImport.Slug = ServiceHelpers.GenerateSlug(userToImport.UserName, _membershipRepository.GetUserBySlugLike(ServiceHelpers.CreateUrl(userToImport.UserName)), userToImport.Slug);
                     userToImport.Email = email;
-                    userToImport.IsApproved = true;
-                    userToImport.PasswordSalt = StringUtils.CreateSalt(AppConstants.SaltSize);
 
                     string createDateStr = null;
-                    if (values.Length >= 3)
+                    if (values.Length >= 4)
                     {
-                        createDateStr = values[2];
+                        createDateStr = values[3];
                     }
                     userToImport.CreateDate = createDateStr.IsNullEmpty() ? DateTime.UtcNow : DateTime.Parse(createDateStr);
 
-                    if (values.Length >= 4)
-                    {
-                        userToImport.Age = Int32.Parse(values[3]);
-                    }
                     if (values.Length >= 5)
                     {
-                        userToImport.Location = values[4];
+                        userToImport.Age = Int32.Parse(values[4]);
                     }
                     if (values.Length >= 6)
                     {
-                        userToImport.Website = values[5];
+                        userToImport.Location = values[5];
                     }
                     if (values.Length >= 7)
                     {
-                        userToImport.Facebook = values[6];
+                        userToImport.Website = values[6];
                     }
                     if (values.Length >= 8)
                     {
-                        userToImport.Signature = values[7];
+                        userToImport.Facebook = values[7];
+                    }
+                    if (values.Length >= 9)
+                    {
+                        userToImport.Signature = values[8];
                     }
 
                     _membershipRepository.Add(userToImport);
@@ -1067,32 +860,32 @@ namespace MVCForum.Services
         /// <summary>
         /// Update the user record with a newly generated password reset security token and timestamp
         /// </summary>
-        public bool UpdatePasswordResetToken(MembershipUser user)
-        {
-            var existingUser = GetUser(user.Id);
-            if (existingUser == null)
-            {
-                return false;
-            }
-            existingUser.PasswordResetToken = CreatePasswordResetToken();
-            existingUser.PasswordResetTokenCreatedAt = DateTime.UtcNow;
-            return true;
-        }
+        //public bool UpdatePasswordResetToken(MembershipUser user)
+        //{
+        //    var existingUser = GetUser(user.Id);
+        //    if (existingUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    existingUser.PasswordResetToken = CreatePasswordResetToken();
+        //    existingUser.PasswordResetTokenCreatedAt = DateTime.UtcNow;
+        //    return true;
+        //}
 
         /// <summary>
         /// Remove the password reset security token and timestamp from the user record
         /// </summary>
-        public bool ClearPasswordResetToken(MembershipUser user)
-        {
-            var existingUser = GetUser(user.Id);
-            if (existingUser == null)
-            {
-                return false;
-            }
-            existingUser.PasswordResetToken = null;
-            existingUser.PasswordResetTokenCreatedAt = null;
-            return true;
-        }
+        //public bool ClearPasswordResetToken(MembershipUser user)
+        //{
+        //    var existingUser = GetUser(user.Id);
+        //    if (existingUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    existingUser.PasswordResetToken = null;
+        //    existingUser.PasswordResetTokenCreatedAt = null;
+        //    return true;
+        //}
 
         /// <summary>
         /// To be valid:
@@ -1100,32 +893,32 @@ namespace MVCForum.Services
         /// - The given token must match the token in the user record
         /// - The token timestamp must be less than 24 hours ago
         /// </summary>
-        public bool IsPasswordResetTokenValid(MembershipUser user, string token)
-        {
-            var existingUser = GetUser(user.Id);
-            if (existingUser == null || string.IsNullOrEmpty(existingUser.PasswordResetToken))
-            {
-                return false;
-            }
-            // A security token must have an expiry date
-            if (existingUser.PasswordResetTokenCreatedAt == null)
-            {
-                return false;
-            }
-            // The security token is only valid for 48 hours
-            if ((DateTime.UtcNow - existingUser.PasswordResetTokenCreatedAt.Value).TotalHours >= MaxHoursToResetPassword)
-            {
-                return false;
-            }
-            return existingUser.PasswordResetToken == token;
-        }
+        //public bool IsPasswordResetTokenValid(MembershipUser user, string token)
+        //{
+        //    var existingUser = GetUser(user.Id);
+        //    if (existingUser == null || string.IsNullOrEmpty(existingUser.PasswordResetToken))
+        //    {
+        //        return false;
+        //    }
+        //    // A security token must have an expiry date
+        //    if (existingUser.PasswordResetTokenCreatedAt == null)
+        //    {
+        //        return false;
+        //    }
+        //    // The security token is only valid for 48 hours
+        //    if ((DateTime.UtcNow - existingUser.PasswordResetTokenCreatedAt.Value).TotalHours >= MaxHoursToResetPassword)
+        //    {
+        //        return false;
+        //    }
+        //    return existingUser.PasswordResetToken == token;
+        //}
 
         /// <summary>
         /// Generate a password reset token, a guid is sufficient
         /// </summary>
-        private static string CreatePasswordResetToken()
-        {
-            return Guid.NewGuid().ToString().ToLower().Replace("-", "");
-        }
+        //private static string CreatePasswordResetToken()
+        //{
+        //    return Guid.NewGuid().ToString().ToLower().Replace("-", "");
+        //}
     }
 }

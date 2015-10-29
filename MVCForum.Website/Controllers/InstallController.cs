@@ -328,7 +328,6 @@ namespace MVCForum.Website.Controllers
                             EnableSpamReporting = true,
                             EnableMemberReporting = true,
                             EnableEmailSubscriptions = true,
-                            ManuallyAuthoriseNewMembers = false,
                             EmailAdminOnNewMemberSignUp = true,
                             TopicsPerPage = 20,
                             PostsPerPage = 20,
@@ -349,7 +348,6 @@ namespace MVCForum.Website.Controllers
                             DefaultLanguage = startingLanguage,
                             ActivitiesPerPage = 20,
                             EnableAkisment = false,
-                            EnableSocialLogins = false,
                             EnablePolls = true
                         };
                         _settingsService.Add(settings);
@@ -374,7 +372,7 @@ namespace MVCForum.Website.Controllers
                 try
                 {
                     // If the admin user exists then don't do anything else
-                    if (_membershipService.GetUser("admin") == null)
+                    if (_roleService.GetUsersForRole(AppConstants.AdminRoleName).Count() > 0)
                     {
                         // Set up the initial category permissions
                         var readOnly = new Permission { Name = AppConstants.PermissionReadOnly };
@@ -405,24 +403,24 @@ namespace MVCForum.Website.Controllers
                         _permissionService.Add(editMembers);
 
                         // create the admin user and put him in the admin role
-                        var admin = new MembershipUser
-                        {
-                            Email = "you@email.com",
-                            UserName = "admin",
-                            Password = "password",
-                            IsApproved = true,
-                            DisableEmailNotifications = false,
-                            DisablePosting = false,
-                            DisablePrivateMessages = false
-                        };
-                        _membershipService.CreateUser(admin);
+                        //var admin = new MembershipUser
+                        //{
+                        //    Email = "you@email.com",
+                        //    UserName = "admin",
+                        //    Password = "password",
+                        //    IsApproved = true,
+                        //    DisableEmailNotifications = false,
+                        //    DisablePosting = false,
+                        //    DisablePrivateMessages = false
+                        //};
+                        //_membershipService.CreateUser(admin);
 
                         // Do a save changes just in case
                         unitOfWork.SaveChanges();
 
                         // Put the admin in the admin role
-                        var adminRole = _roleService.GetRole(AppConstants.AdminRoleName);
-                        admin.Roles = new List<MembershipRole> { adminRole };
+                        //var adminRole = _roleService.GetRole(AppConstants.AdminRoleName);
+                        //admin.Roles = new List<MembershipRole> { adminRole };
 
                         unitOfWork.Commit();
                     }

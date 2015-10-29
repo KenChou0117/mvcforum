@@ -7,10 +7,11 @@ using MVCForum.Domain.DomainModel;
 using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Areas.Admin.ViewModels;
+using MVCForum.Website.Application;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public partial class BatchController : BaseAdminController
     {
         private readonly ICategoryService _categoryService;
@@ -25,50 +26,6 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             _topicService = topicService;
             _privateMessageService = privateMessageService;
         }
-
-        #region Members
-        public ActionResult BatchDeleteMembers()
-        {
-            return View(new BatchDeleteMembersViewModel { AmoutOfDaysSinceRegistered = 0, AmoutOfPosts = 0 });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult BatchDeleteMembers(BatchDeleteMembersViewModel viewModel)
-        {
-            using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
-            {
-                try
-                {
-                    var membersToDelete = MembershipService.GetUsersByDaysPostsPoints(viewModel.AmoutOfDaysSinceRegistered,
-                                                                                        viewModel.AmoutOfPosts);
-                    var count = membersToDelete.Count;
-                    foreach (var membershipUser in membersToDelete)
-                    {
-                        MembershipService.Delete(membershipUser, unitOfWork);
-                    }
-                    unitOfWork.Commit();
-                    TempData[AppConstants.MessageViewBagName] = new GenericMessageViewModel
-                    {
-                        Message = string.Format("{0} members deleted", count),
-                        MessageType = GenericMessages.success
-                    };
-                }
-                catch (Exception ex)
-                {
-                    unitOfWork.Rollback();
-                    LoggingService.Error(ex);
-                    TempData[AppConstants.MessageViewBagName] = new GenericMessageViewModel
-                    {
-                        Message = ex.Message,
-                        MessageType = GenericMessages.danger
-                    };
-                }
-            }
-
-            return View();
-        } 
-        #endregion
 
         #region Topics
         public ActionResult BatchMoveTopics()

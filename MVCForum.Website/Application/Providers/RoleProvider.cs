@@ -1,5 +1,6 @@
 ﻿using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Website.Application;
+using System;
 
 namespace MVCForum.Website.Membership
 {
@@ -13,10 +14,9 @@ namespace MVCForum.Website.Membership
             }
         }
 
-        public override string[] GetRolesForUser(string username)
+        public override string[] GetRolesForUser(string userId)
         {
-
-            return MembershipService.GetRolesForUser(username);           
+            return MembershipService.GetRolesForUser(Guid.Parse(userId));           
         }
 
         #region NOT IMPLEMENTED - not required

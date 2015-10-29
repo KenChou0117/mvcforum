@@ -81,12 +81,6 @@ namespace MVCForum.Website.Membership
             _enablePasswordReset = Convert.ToBoolean(GetConfigValue(config["enablePasswordReset"], "true"));
         }
 
-        //var user = MembershipService.GetUser(username);
-        //if (user != null)
-        //{
-        //    return 
-        //}
-        //return false;
 
         /// <summary>
         /// Validate the user (required for membership in MVC)
@@ -96,8 +90,7 @@ namespace MVCForum.Website.Membership
         /// <returns></returns>
         public override bool ValidateUser(string username, string password)
         {
-            // use the data in the graph object to authorise the user
-            return MembershipService.ValidateUser(username, password, MaxInvalidPasswordAttempts);
+            throw new System.NotImplementedException();
         }
 
         public override int MinRequiredPasswordLength
@@ -125,24 +118,12 @@ namespace MVCForum.Website.Membership
 
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
-            var user = MembershipService.GetUser(username);
-            if (user != null)
-            {
-                return MembershipService.ChangePassword(user, oldPassword, newPassword);
-            }
-            return false;
+            throw new System.NotImplementedException();
         }
 
         public override bool ChangePasswordQuestionAndAnswer(string username, string password, string newPasswordQuestion, string newPasswordAnswer)
         {
-            if (ValidateUser(username, password))
-            {
-                var user = MembershipService.GetUser(username);
-                user.PasswordQuestion = newPasswordQuestion;
-                user.PasswordAnswer = newPasswordAnswer;
-                return true;
-            }
-            return false;
+            throw new System.NotImplementedException();
         }
 
         public override bool EnablePasswordReset

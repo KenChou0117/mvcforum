@@ -19,11 +19,8 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
         [Display(Name = "User Name")]        
         public string UserName { get; set; }
 
-        [Display(Name = "Locked Out")]
-        public bool IsLockedOut { get; set; }
-
-        [Display(Name = "Approved")]
-        public bool IsApproved { get; set; }
+        [Display(Name = "Email")]
+        public String Email { get; set; }
 
         [Display(Name = "Roles")]
         public string[] Roles { get; set; }
@@ -61,12 +58,6 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
         [Display(Name = "Users Uploaded Avatar")]
         public string Avatar { get; set; }
 
-        [Display(Name = "Password Question")]
-        public string PasswordQuestion { get; set; }
-
-        [Display(Name = "Password Answer")]
-        public string PasswordAnswer { get; set; }
-
         [Display(Name = "Email Address")]
         [EmailAddress]
         public string Email { get; set; }
@@ -99,9 +90,6 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
         [StringLength(60)]
         public string Facebook { get; set; }
 
-        [Display(Name = "User is Approved")]
-        public bool IsApproved { get; set; }
-
         [Display(Name = "Disable email notifications for this member")]
         public bool DisableEmailNotifications { get; set; }
         
@@ -113,9 +101,6 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
 
         [Display(Name = "Disable file uploading on posts and topics for this user")]
         public bool DisableFileUploads { get; set; }
-
-        [Display(Name = "User is Locked Out")]
-        public bool IsLockedOut { get; set; }
 
         [Display(Name = "User is Banned")]
         public bool IsBanned { get; set; }

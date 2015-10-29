@@ -6,7 +6,7 @@
 }
 <ul class="nav navbar-right top-nav">
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @User.Identity.Name <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @Model.LoggedOnUserName <b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li>
                 <a href="@Url.Action("Index", "PrivateMessage", new { area = "" })">
@@ -104,9 +104,6 @@
                     <a href="@Url.Action("AddRole", "Account", new { area = "Admin" }, null)" class="@(currentController == "account" && currentAction == "addrole" ? "active" : "")">Add Roles</a>
                 </li>
                 <li>
-                    <a href="@Url.Action("Index", "AdminSocial", new { area = "Admin" }, null)" class="@(currentController == "adminsocial" && currentAction == "index" ? "active" : "")">Social Logins</a>
-                </li>
-                <li>
                     <a href="@Url.Action("Members", "ImportExport", new { area = "Admin" }, null)" class="@(currentController == "importexport" && currentAction == "members" ? "active" : "")">Import / Export</a>
                 </li>
             </ul>
@@ -117,16 +114,10 @@
             </a>
             <ul id="spam" class="collapse">
                 <li>
-                    <a href="@Url.Action("Index", "BannedEmail", new { area = "Admin" })" class="@(currentController == "bannedemail" && currentAction == "index" ? "active" : "")">Ban Emails</a>
-                </li>
-                <li>
                     <a href="@Url.Action("Index", "BannedWord", new { area = "Admin" })" class="@(currentController == "bannedword" && currentAction == "index" ? "active" : "")">Banned &amp; Stop Words</a>
                 </li>
                 <li>
                     <a href="@Url.Action("Akismet", "AdminSpam", new { area = "Admin" })" class="@(currentController == "adminspam" && currentAction == "akismet" ? "active" : "")">Akismet</a>
-                </li>
-                <li>
-                    <a href="@Url.Action("RegistrationQuestion", "AdminSpam", new { area = "Admin" })" class="@(currentController == "adminspam" && currentAction == "registrationquestion" ? "active" : "")">Registration Question</a>
                 </li>
                 <li>
                     <a href="@Url.Action("SpamReporting", "AdminSpam", new { area = "Admin" })" class="@(currentController == "adminspam" && currentAction == "spamreporting" ? "active" : "")">Spam Reporting</a>
@@ -157,9 +148,6 @@
                 <i class="fa fa-fw fa-bolt"></i> Batch Tools <i class="fa fa-fw fa-caret-down"></i>
             </a>
             <ul id="batch" class="collapse">
-                <li>
-                    <a href="@Url.Action("BatchDeleteMembers", "Batch", new { area = "Admin" }, null)" class="@(currentController == "batch" && currentAction == "batchdeletemembers" ? "active" : "")">Batch Delete Members</a>
-                </li>
                 <li>
                     <a href="@Url.Action("BatchMoveTopics", "Batch", new { area = "Admin" }, null)" class="@(currentController == "batch" && currentAction == "batchmovetopics" ? "active" : "")">Batch Move Topics</a>
                 </li>

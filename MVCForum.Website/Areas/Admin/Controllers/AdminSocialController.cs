@@ -8,7 +8,7 @@ using MVCForum.Website.Areas.Admin.ViewModels;
 
 namespace MVCForum.Website.Areas.Admin.Controllers
 {
-    [Authorize(Roles = AppConstants.AdminRoleName)]
+    [SSOAuthorizeAttribute(Roles = AppConstants.AdminRoleName)]
     public class AdminSocialController : BaseAdminController
     {
         public AdminSocialController(ILoggingService loggingService, IUnitOfWorkManager unitOfWorkManager, IMembershipService membershipService, ILocalizationService localizationService, ISettingsService settingsService)
@@ -23,13 +23,7 @@ namespace MVCForum.Website.Areas.Admin.Controllers
                 var settings = SettingsService.GetSettings();
                 var viewModel = new SocialSettingsViewModel
                 {
-                    EnableSocialLogins = settings.EnableSocialLogins == true,
-                    FacebookAppId = SiteConstants.FacebookAppId,
-                    FacebookAppSecret = SiteConstants.FacebookAppSecret,
-                    GooglePlusAppId = SiteConstants.GooglePlusAppId,
-                    GooglePlusAppSecret = SiteConstants.GooglePlusAppSecret,
-                    MicrosoftAppId = SiteConstants.MicrosoftAppId,
-                    MicrosoftAppSecret = SiteConstants.MicrosoftAppSecret
+
                 };
                 return View(viewModel);
             }
@@ -42,16 +36,6 @@ namespace MVCForum.Website.Areas.Admin.Controllers
             {
  
                 var settings = SettingsService.GetSettings(false);
-
-                settings.EnableSocialLogins = viewModel.EnableSocialLogins;
-
-                // Repopulate the view model
-                viewModel.FacebookAppId = SiteConstants.FacebookAppId;
-                viewModel.FacebookAppSecret = SiteConstants.FacebookAppSecret;
-                viewModel.GooglePlusAppId = SiteConstants.GooglePlusAppId;
-                viewModel.GooglePlusAppSecret = SiteConstants.GooglePlusAppSecret;
-                viewModel.MicrosoftAppId = SiteConstants.MicrosoftAppId;
-                viewModel.MicrosoftAppSecret = SiteConstants.MicrosoftAppSecret;
 
                 try
                 {

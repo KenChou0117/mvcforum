@@ -66,13 +66,8 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
         [DisplayName("Allow Email Subscriptions")]
         public bool EnableEmailSubscriptions { get; set; }
 
-        [DisplayName("New Members Must Confirm Their Account Via A Link Sent In An Email - Will not work with Twitter accounts!")]
-        public bool NewMemberEmailConfirmation { get; set; }
 
-        [DisplayName("Manually Authorise New Members")]
-        public bool ManuallyAuthoriseNewMembers { get; set; }
-
-        [DisplayName("Email Admin On New Member Signup")]
+        [DisplayName("Email Admin On New Member LogIn")]
         public bool EmailAdminOnNewMemberSignUp { get; set; }
 
         [DisplayName("Number Of Topics Per Page")]
@@ -167,12 +162,6 @@ namespace MVCForum.Website.Areas.Admin.ViewModels
 
         [DisplayName("Enter the answer to your Spam question")]
         public string SpamAnswer { get; set; }
-
-        [DisplayName("Enable social logins (Facebook etc...)")]
-        public bool EnableSocialLogins { get; set; }
-
-        [DisplayName("Suspend the registration (Don't allow any new members to register)")]
-        public bool SuspendRegistration { get; set; }
 
         [DisplayName("Page Title")]
         [MaxLength(80)]

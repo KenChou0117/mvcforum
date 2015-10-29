@@ -24,9 +24,8 @@
             <thead>
                 <tr>
                     <th>Edit</th>
-                    <th>Users</th>
-                    <th>Approved</th>
-                    <th>Locked Out</th>
+                    <th>User Name</th>
+                    <th>Email</th>
                     <th>Roles</th>
                     <th>Delete</th>
                 </tr>
@@ -46,10 +45,7 @@
                             <strong>@Html.DisplayFor(modelItem => user.UserName)</strong>
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => user.IsApproved)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => user.IsLockedOut)
+                            @Html.DisplayFor(modelItem => user.Email)
                         </td>
                         <td>
                             <span class="listrolecbholder">

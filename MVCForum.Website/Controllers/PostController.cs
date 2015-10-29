@@ -75,8 +75,8 @@ namespace MVCForum.Website.Controllers
                     }
                 }
 
-                // Quick check to see if user is locked out, when logged in
-                if (loggedOnUser.IsLockedOut || !loggedOnUser.IsApproved)
+                //Quick check to see if user is locked out, when logged in
+                if (loggedOnUser.IsBanned)
                 {
                     FormsAuthentication.SignOut();
                     throw new Exception(LocalizationService.GetResourceString("Errors.NoAccess"));
@@ -230,7 +230,7 @@ namespace MVCForum.Website.Controllers
                         sb.AppendFormat("<p><a href=\"{0}\">{0}</a></p>", string.Concat(SettingsService.GetSettings().ForumUrl.TrimEnd('/'), topic.NiceUrl));
 
                         // create the emails only to people who haven't had notifications disabled
-                        var emails = usersToNotify.Where(x => x.DisableEmailNotifications != true && !x.IsLockedOut).Select(user => new Email
+                        var emails = usersToNotify.Where(x => x.DisableEmailNotifications != true).Select(user => new Email
                         {
                             Body = _emailService.EmailTemplate(user.UserName, sb.ToString()),
                             EmailTo = user.Email,

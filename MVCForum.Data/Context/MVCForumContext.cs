@@ -47,7 +47,6 @@ namespace MVCForum.Data.Context
         public DbSet<TagNotification> TagNotification { get; set; }
         public DbSet<Vote> Vote { get; set; }
         public DbSet<TopicTag> TopicTag { get; set; }
-        public DbSet<BannedEmail> BannedEmail { get; set; }
         public DbSet<BannedWord> BannedWord { get; set; }
         public DbSet<UploadedFile> UploadedFile { get; set; }
         public DbSet<Favourite> Favourite { get; set; }

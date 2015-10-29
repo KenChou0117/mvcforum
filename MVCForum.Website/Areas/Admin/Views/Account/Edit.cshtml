@@ -1,4 +1,5 @@
 ﻿@using MVCForum.Website.Application.ExtensionMethods
+@using MVCForum.Domain.Constants
 @model MVCForum.Website.Areas.Admin.ViewModels.MemberEditViewModel
 @{
     ViewBag.Title = (Model.Id == Guid.Empty) ? "Add User" : "Edit User";
@@ -23,26 +24,12 @@
 
             <div class="form-group">
                 @Html.LabelFor(x => x.UserName)
-                @Html.TextBoxFor(x => x.UserName, new { @class = "form-control" })
-                @Html.ValidationMessageFor(x => x.UserName)
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(x => x.PasswordQuestion)
-                @Html.TextBoxFor(x => x.PasswordQuestion, new { @class = "form-control" })
-                @Html.ValidationMessageFor(x => x.PasswordQuestion)
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(x => x.PasswordAnswer)
-                @Html.TextBoxFor(x => x.PasswordAnswer, new { @class = "form-control" })
-                @Html.ValidationMessageFor(x => x.PasswordAnswer)
+                <p class="form-control-static">@Model.UserName</p>
             </div>
 
             <div class="form-group">
                 @Html.LabelFor(x => x.Email)
-                @Html.TextBoxFor(x => x.Email, new { @class = "form-control", type = "email" })
-                @Html.ValidationMessageFor(x => x.Email)
+                <p class="form-control-static">@Model.Email</p>
             </div>
 
             <div class="form-group">
@@ -128,22 +115,8 @@
                 @Html.ValidationMessageFor(m => m.DisableFileUploads)
             </div>
 
-            <div class="checkbox">
-                @using (Html.BeginLabelFor(m => m.IsApproved, new { @class = "checkbox" }))
-                {
-                    @Html.CheckBoxFor(m => m.IsApproved)
-                }
-                @Html.ValidationMessageFor(m => m.IsApproved)
-            </div>
-
-            <div class="checkbox">
-                @using (Html.BeginLabelFor(m => m.IsLockedOut, new { @class = "checkbox" }))
-                {
-                    @Html.CheckBoxFor(m => m.IsLockedOut)
-                }
-                @Html.ValidationMessageFor(m => m.IsLockedOut)
-            </div>
-
+            if (Model.Id != Guid.Parse(User.Identity.Name))
+            { 
             <div class="checkbox">
                 @using (Html.BeginLabelFor(m => m.IsBanned, new { @class = "checkbox" }))
                 {
@@ -151,7 +124,7 @@
                 }
                 @Html.ValidationMessageFor(m => m.IsBanned)
             </div>
-
+            }
             <div class="form-group">
                 @Html.LabelFor(x => x.Comment)
                 @Html.TextAreaFor(x => x.Comment, new { @class = "form-control" })
@@ -160,7 +133,7 @@
 
             <div class="submit-holder">
                 <input type="submit" class="btn-mvc-green" value="@(buttonText)" />
-                @if (Model.Id != Guid.Empty)
+                @if (Model.Id != Guid.Parse(User.Identity.Name))
                 {
                     <a href="@Url.Action("Delete", new{Model.Id})" onclick="return confirm('Are you sure you want to delete @Model.UserName?')" class="btn-mvc-red" role="button">Delete</a>
                 }                
